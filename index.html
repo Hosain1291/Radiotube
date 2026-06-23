@@ -2,762 +2,498 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아날로그 진공관 라디오</title>
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>1940s 진공관 라디오 시뮬레이터</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for retro touch -->
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,600;1,400&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* 1940s Typography & Visual Styles */
-        .retro-title {
-            font-family: 'Playfair Display', 'Nanum Myeongjo', serif;
-        }
-        .retro-mono {
-            font-family: 'Courier Prime', monospace;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Special+Elite&family=Gowun+Batang:wght@400;700&display=swap');
         
-        /* 3D Flip Styles */
-        .perspective-1000 {
-            perspective: 1000px;
-        }
-        .transform-style-3d {
-            transform-style: preserve-3d;
-        }
-        .backface-hidden {
-            backface-visibility: hidden;
-        }
-        .rotate-y-180 {
-            transform: rotateY(180deg);
+        body {
+            background: radial-gradient(circle, #2c1e14 0%, #0d0805 100%);
+            font-family: 'Gowun Batang', serif;
+            touch-action: manipulation;
         }
 
-        /* Wood textures & custom designs */
-        .wood-gradient {
-            background: linear-gradient(135deg, #2c1a0e 0%, #4a2c11 50%, #1e1107 100%);
-        }
-        .wood-inner {
-            background: linear-gradient(180deg, #1f120a 0%, #321d0f 100%);
-        }
-        .brass-bezel {
-            background: linear-gradient(135deg, #d4af37 0%, #aa7c11 40%, #f3e5ab 55%, #805a00 80%, #ffd700 100%);
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 4px 8px rgba(0,0,0,0.5);
-        }
-        .dial-glass {
-            background: radial-gradient(circle, rgba(253,244,215,0.95) 0%, rgba(215,195,150,0.98) 100%);
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
-        }
-        
-        /* Grille fabric pattern */
-        .grille-fabric {
-            background-color: #3d2c1f;
+        /* 우드 텍스처 효과 */
+        .wood-panel {
+            background: #4a2c11;
             background-image: 
-                radial-gradient(rgba(240, 190, 120, 0.15) 15%, transparent 16%),
-                radial-gradient(rgba(0, 0, 0, 0.45) 15%, transparent 16%);
+                linear-gradient(rgba(0, 0, 0, 0.15) 50%, transparent 50%),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 100% 4px, 6px 100%;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 25px 50px -12px rgba(0,0,0,0.9);
+        }
+
+        /* 빈티지 라디오 그릴 패브릭 */
+        .grill-fabric {
+            background-color: #3d2314;
+            background-image: 
+                radial-gradient(rgba(0, 0, 0, 0.4) 15%, transparent 16%),
+                radial-gradient(rgba(255, 255, 255, 0.03) 15%, transparent 16%);
             background-size: 8px 8px;
             background-position: 0 0, 4px 4px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
         }
 
-        /* Vacuum tube glow keyframes */
-        @keyframes tubeWarmUp {
-            0% { filter: drop-shadow(0 0 0px rgba(239, 68, 68, 0)); opacity: 0.15; }
-            100% { filter: drop-shadow(0 0 15px rgba(249, 115, 22, 0.85)); opacity: 1; }
+        /* 노란빛 아날로그 유리 다이얼 */
+        .dial-glass {
+            background: radial-gradient(ellipse at center, #ffd175 0%, #cc963d 100%);
+            font-family: 'Share Tech Mono', monospace;
+            box-shadow: 
+                inset 0 0 15px rgba(0, 0, 0, 0.6),
+                inset 0 0 50px rgba(230, 140, 10, 0.3),
+                0 4px 10px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+            user-select: none;
         }
-        .tube-glow {
-            animation: tubeWarmUp 2.5s ease-out forwards;
+
+        /* 터치 반응 노브 스타일 */
+        .knob-container {
+            position: relative;
+            touch-action: none;
+            user-select: none;
         }
-        @keyframes subtleFlicker {
-            0%, 100% { opacity: 0.95; }
-            50% { opacity: 1; }
-            70% { opacity: 0.92; }
+
+        /* 진공관 달아오르는 필라멘트 효과 */
+        .filament-glow {
+            transition: all 3s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .dial-flicker {
-            animation: subtleFlicker 4s infinite ease-in-out;
+
+        /* 매직 아이 튜닝 튜브 */
+        .magic-eye-glow {
+            background: radial-gradient(circle, #2aff3b 0%, #08600d 70%, #021a03 100%);
+            box-shadow: 0 0 15px rgba(42, 255, 59, 0.7);
+        }
+
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0f0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #5c3a21;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7a4e2e;
         }
     </style>
 </head>
-<body class="bg-stone-900 text-stone-200 min-h-screen flex flex-col items-center justify-between p-4 md:p-8 select-none" style="background-image: radial-gradient(#262626 1px, transparent 1px); background-size: 24px 24px;">
+<body class="min-h-screen text-amber-100 p-3 md:p-8 flex flex-col items-center justify-center overflow-x-hidden">
 
-    <!-- Background atmosphere -->
-    <div class="w-full max-w-6xl flex flex-col items-center flex-grow justify-center gap-8">
+    <!-- 유튜브 플레이어 타겟 엘리먼트 -->
+    <div id="yt-player-container" class="fixed -top-[999px] -left-[999px] w-1 h-1 opacity-0 pointer-events-none">
+        <div id="youtube-iframe-target"></div>
+    </div>
+    
+    <!-- 오디오 엘리먼트 -->
+    <audio id="audio-stream-player" crossorigin="anonymous" loop></audio>
+
+    <div class="max-w-5xl w-full flex flex-col lg:flex-row gap-6 items-stretch">
         
-        <!-- Header -->
-        <div class="text-center">
-            <h1 class="retro-title text-4xl md:text-5xl text-amber-100 tracking-wide drop-shadow-md">Model 1946 "Vocal-Vac"</h1>
-            <p class="retro-mono text-xs text-amber-600/80 mt-1 uppercase tracking-widest">Vacuum Tube Masterpiece &bull; Anti-Freezing Heterodyne Tuner</p>
-        </div>
-
-        <div class="w-full flex flex-col lg:flex-row gap-8 items-center justify-center">
+        <!-- 왼쪽: 메인 진공관 라디오 본체 -->
+        <div class="flex-1 wood-panel rounded-3xl p-5 md:p-8 border-4 border-amber-900/40 relative flex flex-col justify-between min-h-[580px] select-none">
             
-            <!-- Left Side: Radio Chassis Section with 3D Flip capability -->
-            <div class="perspective-1000 w-full max-w-xl h-[530px] relative">
-                <div id="radio-container" class="w-full h-full duration-1000 transform-style-3d relative">
-                    
-                    <!-- FRONT OF THE RADIO -->
-                    <div class="absolute inset-0 backface-hidden rounded-3xl p-6 wood-gradient border-4 border-stone-950 flex flex-col justify-between shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)]">
-                        
-                        <!-- Top Grill & Brand Badge -->
-                        <div class="w-full h-1/3 flex gap-4 items-stretch relative">
-                            <!-- Left Grill -->
-                            <div class="flex-grow grille-fabric rounded-lg border border-stone-900"></div>
-                            
-                            <!-- Center Speaker Badge & Magical Eye Tube -->
-                            <div class="w-28 flex flex-col items-center justify-center gap-2">
-                                <div class="brass-bezel w-14 h-14 rounded-full flex items-center justify-center p-1 shadow-lg">
-                                    <div id="magic-eye" class="w-full h-full rounded-full bg-stone-950 duration-500 flex items-center justify-center border-2 border-stone-800" style="box-shadow: inset 0 0 10px #000;">
-                                        <!-- Magic Eye Filament -->
-                                        <div id="magic-eye-beam" class="w-1.5 h-10 bg-green-500 rounded-full blur-[1px] opacity-10 transform scale-y-50 duration-300"></div>
-                                    </div>
-                                </div>
-                                <span class="retro-title text-xs text-amber-500/80 font-semibold tracking-wider uppercase text-center font-bold">EM-80</span>
-                            </div>
-                            
-                            <!-- Right Grill -->
-                            <div class="flex-grow grille-fabric rounded-lg border border-stone-900"></div>
-                        </div>
+            <!-- 라디오 로고 스티커 -->
+            <div class="absolute top-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                <span class="text-[9px] tracking-[0.3em] font-bold text-amber-600/60 uppercase">Retro Vacuum Tube System</span>
+                <span class="text-base md:text-lg font-serif font-bold tracking-widest text-amber-500/80 drop-shadow-md">PHONOGRAPH 1946</span>
+            </div>
 
-                        <!-- Mid section: Retro Frequency Dial Window (Clean layout without button) -->
-                        <div class="w-full h-[150px] relative brass-bezel p-1.5 rounded-lg my-4">
-                            <div class="w-full h-full rounded dial-glass relative overflow-hidden flex flex-col justify-between select-none">
-                                
-                                <!-- Dial Light (Warm Bulb) -->
-                                <div id="dial-light" class="absolute inset-0 bg-amber-500/0 duration-[2.5s] mix-blend-color-burn pointer-events-none"></div>
-                                <div id="dial-light-ambient" class="absolute inset-0 bg-yellow-400/0 duration-[2.5s] mix-blend-screen opacity-40 dial-flicker pointer-events-none"></div>
+            <!-- 진공관 섀시 창 -->
+            <div class="w-full h-24 bg-black/80 rounded-xl border border-amber-950 p-2 flex justify-around items-end relative overflow-hidden mt-6 shadow-inner">
+                <div class="absolute inset-0 bg-gradient-to-t from-transparent via-black/10 to-black/60 pointer-events-none"></div>
+                <div class="text-[8px] text-zinc-600 absolute top-1 left-2 font-mono">CHASSIS NO. AC-324</div>
+                
+                <!-- 진공관 1 (6V6 Power Output) -->
+                <div class="flex flex-col items-center justify-end h-full w-12 pb-1 relative group">
+                    <div class="absolute text-[8px] font-mono text-amber-700/60 top-0 opacity-100 scale-90">6V6-G</div>
+                    <div class="w-8 h-14 bg-zinc-800/40 rounded-t-full border border-zinc-700/50 flex flex-col items-center justify-end relative shadow-inner">
+                        <div id="tube-1" class="filament-glow w-1.5 h-10 bg-zinc-800 rounded-full mb-1"></div>
+                        <div class="w-7 h-2 bg-zinc-900 border-t border-zinc-800"></div>
+                    </div>
+                    <div class="w-9 h-2 bg-zinc-950 rounded-sm"></div>
+                </div>
 
-                                <!-- Calibrated Frequency Grid Scale Container -->
-                                <div class="relative w-full h-full flex flex-col justify-between py-3 px-12 z-10">
-                                    
-                                    <!-- Isolated Unit Labels -->
-                                    <div class="absolute left-2.5 top-3.5 retro-mono text-[9px] text-stone-900 font-extrabold leading-none">AM<br><span class="text-[7px] text-stone-800/80">kHz</span></div>
-                                    <div class="absolute left-2.5 bottom-3.5 retro-mono text-[9px] text-stone-900 font-extrabold leading-none">SW<br><span class="text-[7px] text-stone-800/80">MHz</span></div>
-
-                                    <!-- AM Scale Numbers -->
-                                    <div class="w-full flex justify-between retro-mono text-amber-950/80 text-xs font-bold border-b border-stone-950/20 pb-1 mt-0.5">
-                                        <span>530</span>
-                                        <span>700</span>
-                                        <span>900</span>
-                                        <span>1100</span>
-                                        <span>1300</span>
-                                        <span>1600</span>
-                                    </div>
-
-                                    <!-- Status & Live Tuning Precision Indicator (Clean Centered Layout) -->
-                                    <div class="w-full flex justify-center items-center">
-                                        <div class="bg-stone-900/10 border border-stone-900/5 rounded px-2.5 py-0.5 flex items-center gap-1.5">
-                                            <div id="tune-lock-dot" class="w-1.5 h-1.5 rounded-full bg-stone-500/50"></div>
-                                            <span id="tuning-precision-display" class="retro-mono text-[10px] text-stone-900 font-bold uppercase tracking-wider">UNTUNED</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- SW Scale Numbers -->
-                                    <div class="w-full flex justify-between retro-mono text-amber-900/90 text-xs font-bold border-t border-stone-950/20 pt-1 mb-0.5">
-                                        <span>5.9</span>
-                                        <span>8.0</span>
-                                        <span>10.0</span>
-                                        <span>12.0</span>
-                                        <span>15.0</span>
-                                        <span>18.0</span>
-                                    </div>
-                                </div>
-
-                                <!-- Dial Needle Line Overlay -->
-                                <div class="absolute inset-x-12 bottom-4 top-4 pointer-events-none z-20">
-                                    <!-- Invisible Range Input for Direct Dragging -->
-                                    <input type="range" id="tuning-slider" min="0" max="100" step="0.01" value="30" class="absolute inset-y-0 -left-2 -right-2 w-[calc(100%+16px)] h-full opacity-0 cursor-ew-resize z-30 pointer-events-auto">
-                                    
-                                    <!-- Visible Tuning Needle -->
-                                    <div id="tuning-needle" class="absolute top-0 bottom-0 w-0.5 bg-red-700/85 transition-all duration-75 shadow-[0_0_4px_rgba(185,28,28,0.5)] z-20" style="left: 30%;">
-                                        <!-- Antique Pointer Hardware -->
-                                        <div class="absolute top-0 -left-[5px] w-3 h-1.5 bg-red-800 rounded-sm"></div>
-                                        <div class="absolute bottom-0 -left-[5px] w-3 h-1.5 bg-red-800 rounded-sm"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Glass Reflections -->
-                                <div class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/0 via-white/10 to-white/0 z-20"></div>
-                            </div>
-                        </div>
-
-                        <!-- Bottom Controls -->
-                        <div class="w-full h-1/4 flex items-center justify-between px-4">
-                            
-                            <!-- Power Toggle (Left) -->
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="retro-title text-[10px] text-amber-500/80 tracking-widest uppercase font-bold">Power</label>
-                                <button id="power-btn" class="w-12 h-12 rounded-full border-4 border-amber-900/60 bg-stone-950 flex items-center justify-center shadow-md active:scale-95 transition-all duration-300">
-                                    <div id="power-toggle" class="w-6 h-6 rounded-full bg-stone-800 border border-stone-600 shadow-inner flex items-center justify-center transform translate-y-0 duration-300">
-                                        <div class="w-2 h-2 rounded-full bg-red-900"></div>
-                                    </div>
-                                </button>
-                                <span id="power-indicator-text" class="retro-mono text-[9px] text-red-600/70 font-semibold uppercase">OFF</span>
-                            </div>
-
-                            <!-- Band Selector Switch (Center-Left) -->
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="retro-title text-[10px] text-amber-500/80 tracking-widest uppercase font-bold">Band</label>
-                                <div class="flex bg-stone-950 rounded-full p-1 border border-amber-950/40 relative">
-                                    <div id="band-slider" class="absolute top-1 bottom-1 left-1 w-[46%] bg-amber-600 rounded-full transition-all duration-300 shadow"></div>
-                                    <button onclick="setBand('AM')" class="relative z-10 px-3 py-1 text-[11px] font-bold retro-mono focus:outline-none transition-colors duration-300 text-amber-200" id="btn-band-am">AM</button>
-                                    <button onclick="setBand('SW')" class="relative z-10 px-3 py-1 text-[11px] font-bold retro-mono focus:outline-none transition-colors duration-300 text-stone-400" id="btn-band-sw">SW</button>
-                                </div>
-                            </div>
-
-                            <!-- Volume Knob (Center-Right) -->
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="retro-title text-[10px] text-amber-500/80 tracking-widest uppercase font-bold">Volume</label>
-                                <div id="knob-volume-container" class="relative w-14 h-14 cursor-ns-resize">
-                                    <div id="knob-volume" class="w-full h-full rounded-full bg-stone-950 border-4 border-stone-800 shadow-[0_4px_8px_rgba(0,0,0,0.5)] flex items-center justify-center transform rotate-0 duration-100">
-                                        <!-- Notch indicator -->
-                                        <div class="absolute top-1 w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                                        <div class="text-[9px] text-amber-600/60 retro-mono mt-1 select-none">VOL</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tuning Control (Right) -->
-                            <div class="flex flex-col items-center gap-1">
-                                <label class="retro-title text-[10px] text-amber-500/80 tracking-widest uppercase font-bold">Tuning</label>
-                                <div id="knob-tuning-container" class="relative w-14 h-14 cursor-ns-resize">
-                                    <div id="knob-tuning" class="w-full h-full rounded-full bg-stone-950 border-4 border-stone-800 shadow-[0_4px_8px_rgba(0,0,0,0.5)] flex items-center justify-center transform rotate-0 duration-100">
-                                        <!-- Notch indicator -->
-                                        <div class="absolute top-1 w-1.5 h-1.5 rounded-full bg-red-600"></div>
-                                        <div class="text-[9px] text-red-600/60 retro-mono mt-1 select-none">TUNE</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Bottom Chassis Vent / Badge -->
-                        <div class="w-full flex justify-between items-center px-4 border-t border-stone-900 pt-2">
-                            <span class="retro-mono text-[9px] text-stone-500">PHILIPS TYPE B3X40U</span>
-                            <button onclick="flipRadio(true)" class="text-xs retro-title text-amber-400/80 hover:text-amber-200 flex items-center gap-1 hover:underline transition-all">
-                                🔌 기기 뒷면 살펴보기 &rarr;
-                            </button>
+                <!-- 진공관 2 (6E5 Magic Eye - 동조 상태 시각 지시계) -->
+                <div class="flex flex-col items-center justify-end h-full w-16 pb-1 relative group">
+                    <div class="absolute text-[8px] font-mono text-green-700/70 top-0 opacity-100 scale-90">6E5 (TUNING)</div>
+                    <div class="w-10 h-10 rounded-full bg-zinc-900 border-2 border-zinc-700 flex items-center justify-center p-0.5 relative mb-2 shadow-md">
+                        <div class="w-full h-full rounded-full magic-eye-glow relative overflow-hidden flex items-center justify-center">
+                            <div id="magic-eye-wedge-l" class="absolute right-1/2 top-0 bottom-0 w-1/2 bg-black/90 origin-right transition-all duration-100" style="transform: rotate(30deg);"></div>
+                            <div id="magic-eye-wedge-r" class="absolute left-1/2 top-0 bottom-0 w-1/2 bg-black/90 origin-left transition-all duration-100" style="transform: rotate(-30deg);"></div>
+                            <div class="w-2.5 h-2.5 rounded-full bg-zinc-950 z-10 border border-green-500/30"></div>
                         </div>
                     </div>
+                    <div class="w-9 h-2 bg-zinc-950 rounded-sm"></div>
+                </div>
 
-                    <!-- BACK OF THE RADIO (Chassis & Tubes Room) -->
-                    <div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 wood-inner border-4 border-stone-950 flex flex-col justify-between shadow-[0_25px_50px_-12px_rgba(0,0,0,0.8)]">
-                        
-                        <!-- Vintage Warning Stamp -->
-                        <div class="flex justify-between items-start border-b border-stone-800 pb-2">
-                            <div>
-                                <h3 class="retro-title text-xs text-red-500 font-bold tracking-widest uppercase">CAUTION - HIGH VOLTAGE</h3>
-                                <p class="retro-mono text-[9px] text-stone-400/80">DO NOT DEFEAT INTERLOCKS. TUBE FILAMENT OPERATES AT HIGH POTENTIAL.</p>
-                            </div>
-                            <button onclick="flipRadio(false)" class="text-xs retro-title text-amber-400/80 hover:text-amber-200 flex items-center gap-1 hover:underline transition-all">
-                                &larr; 기기 전면으로
-                            </button>
+                <!-- 진공관 3 (12AX7 Pre-Amp) -->
+                <div class="flex flex-col items-center justify-end h-full w-12 pb-1 relative group">
+                    <div class="absolute text-[8px] font-mono text-amber-700/60 top-0 opacity-100 scale-90">12AX7</div>
+                    <div class="w-6 h-12 bg-zinc-800/40 rounded-t-full border border-zinc-700/50 flex flex-col items-center justify-end relative">
+                        <div class="flex gap-1 mb-1">
+                            <div id="tube-3a" class="filament-glow w-1 h-7 bg-zinc-800 rounded-full"></div>
+                            <div id="tube-3b" class="filament-glow w-1 h-7 bg-zinc-800 rounded-full"></div>
                         </div>
-
-                        <!-- Inner Chassis: Vacuum Tubes visible -->
-                        <div class="flex-grow my-4 bg-stone-950/80 border border-stone-900 rounded-lg p-4 flex justify-around items-end relative overflow-hidden shadow-inner">
-                            
-                            <!-- Dusty background circuit look -->
-                            <div class="absolute inset-0 opacity-10 pointer-events-none flex items-center justify-center">
-                                <svg class="w-3/4 h-3/4 stroke-amber-500" fill="none" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="40" stroke-width="1"/>
-                                    <line x1="10" y1="50" x2="90" y2="50" stroke-width="0.5"/>
-                                    <line x1="50" y1="10" x2="50" y2="90" stroke-width="0.5"/>
-                                    <rect x="35" y="35" width="30" height="30" stroke-width="1"/>
-                                </svg>
-                            </div>
-
-                            <!-- Tube 1 (Power Amplifier El84) -->
-                            <div class="flex flex-col items-center w-16 relative">
-                                <div class="w-12 h-24 relative flex items-end justify-center">
-                                    <div class="absolute bottom-0 w-8 h-3 bg-stone-800 rounded border border-stone-700 z-10"></div>
-                                    <div class="tube-filament absolute bottom-2 w-4 h-12 bg-orange-600/0 rounded-full blur-[4px] mix-blend-screen transition-all duration-[3s]"></div>
-                                    <div class="absolute bottom-1 w-10 h-20 rounded-t-full border border-stone-600/30 bg-gradient-to-t from-stone-900/50 via-white/5 to-stone-500/10 shadow-lg"></div>
-                                </div>
-                                <span class="retro-mono text-[9px] text-stone-500 mt-1">EL84</span>
-                            </div>
-
-                            <!-- Tube 2 (Tuning Indicator EM80) -->
-                            <div class="flex flex-col items-center w-16 relative">
-                                <div class="w-10 h-20 relative flex items-end justify-center">
-                                    <div class="absolute bottom-0 w-7 h-3 bg-stone-800 rounded border border-stone-700 z-10"></div>
-                                    <div class="tube-filament absolute bottom-2 w-3.5 h-10 bg-orange-600/0 rounded-full blur-[4px] mix-blend-screen transition-all duration-[3s]"></div>
-                                    <div class="absolute bottom-1 w-8 h-16 rounded-t-full border border-stone-600/30 bg-gradient-to-t from-stone-900/50 via-white/5 to-stone-500/10 shadow-lg"></div>
-                                </div>
-                                <span class="retro-mono text-[9px] text-stone-500 mt-1">EM80</span>
-                            </div>
-
-                            <!-- Tube 3 (Triode-Heptode ECH81) -->
-                            <div class="flex flex-col items-center w-16 relative">
-                                <div class="w-12 h-24 relative flex items-end justify-center">
-                                    <div class="absolute bottom-0 w-8 h-3 bg-stone-800 rounded border border-stone-700 z-10"></div>
-                                    <div class="tube-filament absolute bottom-2 w-4 h-14 bg-orange-600/0 rounded-full blur-[4px] mix-blend-screen transition-all duration-[3s]"></div>
-                                    <div class="absolute bottom-1 w-10 h-22 rounded-t-full border border-stone-600/30 bg-gradient-to-t from-stone-900/50 via-white/5 to-stone-500/10 shadow-lg"></div>
-                                </div>
-                                <span class="retro-mono text-[9px] text-stone-500 mt-1">ECH81</span>
-                            </div>
-
-                            <!-- Tube 4 (Rectifier EZ80) -->
-                            <div class="flex flex-col items-center w-16 relative">
-                                <div class="w-10 h-16 relative flex items-end justify-center">
-                                    <div class="absolute bottom-0 w-7 h-3 bg-stone-800 rounded border border-stone-700 z-10"></div>
-                                    <div class="tube-filament absolute bottom-2 w-3 h-8 bg-orange-600/0 rounded-full blur-[4px] mix-blend-screen transition-all duration-[3s]"></div>
-                                    <div class="absolute bottom-1 w-8 h-14 rounded-t-full border border-stone-600/30 bg-gradient-to-t from-stone-900/50 via-white/5 to-stone-500/10 shadow-lg"></div>
-                                </div>
-                                <span class="retro-mono text-[9px] text-stone-500 mt-1">EZ80</span>
-                            </div>
-
-                        </div>
-
-                        <!-- YouTube Receiver Panel -->
-                        <div class="w-full bg-stone-950/90 border border-stone-900 rounded-lg p-2.5 flex items-center justify-between">
-                            <div class="flex items-center gap-3 w-2/3">
-                                <div class="w-10 h-10 bg-stone-900 rounded border border-stone-800 flex items-center justify-center shadow-inner">
-                                    <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.516 0-9.387.507A3.003 3.003 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.387.507 9.387.507s7.517 0 9.387-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.93 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                    </svg>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <span class="retro-mono text-[10px] text-amber-500 font-semibold block">ETHER-RECEIVER STATUS:</span>
-                                    <span id="playing-title" class="retro-mono text-[11px] text-stone-400 truncate block">No Signal</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Hidden YouTube Frame Container -->
-                            <div class="w-12 h-10 opacity-10 bg-stone-800 rounded border border-stone-700 overflow-hidden relative">
-                                <div id="yt-player"></div>
-                            </div>
-                        </div>
-
+                        <div class="w-5 h-2 bg-zinc-900 border-t border-zinc-800"></div>
                     </div>
-
+                    <div class="w-7 h-2 bg-zinc-950 rounded-sm"></div>
                 </div>
             </div>
 
-            <!-- Right Side: Leather Notebook / Logbook (Frequency Customizer) -->
-            <div class="w-full max-w-md bg-amber-50 p-6 rounded-xl shadow-2xl border-l-8 border-stone-950 text-stone-900 relative">
-                <!-- Retro Binder Ring holes on left edge -->
-                <div class="absolute left-1 top-0 bottom-0 flex flex-col justify-around py-6 w-3 pointer-events-none">
-                    <div class="w-2 h-4 bg-stone-900 rounded-full shadow-inner"></div>
-                    <div class="w-2 h-4 bg-stone-900 rounded-full shadow-inner"></div>
-                    <div class="w-2 h-4 bg-stone-900 rounded-full shadow-inner"></div>
-                    <div class="w-2 h-4 bg-stone-900 rounded-full shadow-inner"></div>
+            <!-- 메인 아날로그 유리 튜닝창 (터치 드래그 가능 구역) -->
+            <div class="my-5 relative">
+                <div id="dial-glass-window" class="dial-glass rounded-xl p-4 relative border-4 border-amber-950 shadow-2xl h-36 flex flex-col justify-between cursor-ew-resize">
+                    
+                    <!-- 주파수 스케일 눈금 -->
+                    <div class="w-full flex flex-col justify-around h-full font-mono text-[10px] md:text-xs text-amber-950 font-bold pointer-events-none">
+                        
+                        <!-- SW3 (15.00 - 21.95 MHz) -->
+                        <div id="scale-sw3" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW3</span>
+                            <div class="flex justify-between flex-1 px-4 relative">
+                                <span>15.00</span><span>16.50</span><span>18.00</span><span>19.50</span><span>21.00</span><span>21.95</span>
+                                <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
+                            </div>
+                            <span class="w-8 text-right">MHz</span>
+                        </div>
+
+                        <!-- SW2 (7.50 - 15.00 MHz) -->
+                        <div id="scale-sw2" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW2</span>
+                            <div class="flex justify-between flex-1 px-4 relative">
+                                <span>7.50</span><span>9.00</span><span>10.50</span><span>12.00</span><span>13.50</span><span>15.00</span>
+                                <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
+                            </div>
+                            <span class="w-8 text-right">MHz</span>
+                        </div>
+
+                        <!-- SW1 (3.30 - 7.50 MHz) -->
+                        <div id="scale-sw1" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW1</span>
+                            <div class="flex justify-between flex-1 px-4 relative">
+                                <span>3.30</span><span>4.10</span><span>4.90</span><span>5.70</span><span>6.50</span><span>7.50</span>
+                                <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
+                            </div>
+                            <span class="w-8 text-right">MHz</span>
+                        </div>
+
+                        <!-- AM (530 - 1600 kHz) -->
+                        <div id="scale-am" class="flex justify-between items-center relative py-0.5 opacity-100 transition-opacity duration-300">
+                            <span class="w-10 text-left font-serif font-bold text-[9px]">AM</span>
+                            <div class="flex justify-between flex-1 px-4 relative">
+                                <span>530</span><span>700</span><span>900</span><span>1100</span><span>1300</span><span>1600</span>
+                                <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
+                            </div>
+                            <span class="w-8 text-right">kHz</span>
+                        </div>
+                    </div>
+
+                    <!-- 주파수 프리셋 등록 위치 표시 마커 컨테이너 -->
+                    <div id="preset-markers" class="absolute left-[44px] right-[44px] top-0 bottom-0 pointer-events-none"></div>
+
+                    <!-- 주파수 바늘 (Tuning Needle) -->
+                    <div id="tuning-needle" class="absolute top-0 bottom-0 w-1 bg-red-700 shadow-[0_0_8px_rgba(185,28,28,0.8)] left-[50%] transition-all duration-75 pointer-events-none z-10">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-800 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 스피커 패브릭 그릴 -->
+            <div class="grill-fabric h-24 rounded-xl border-4 border-amber-950 relative flex items-center justify-center overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
+                <div class="flex gap-4 w-5/6 h-full items-center justify-around">
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                    <div class="w-1.5 h-4/5 bg-amber-900/30 rounded-full border border-amber-950/40"></div>
+                </div>
+                <!-- 전파 시그널 인디케이터 -->
+                <div class="absolute bottom-2 right-4 bg-black/60 border border-amber-900 px-2 py-0.5 rounded text-[9px] font-mono text-amber-500 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" id="signal-light"></span>
+                    <span id="signal-text">NO SIGNAL</span>
+                </div>
+            </div>
+
+            <!-- 컨트롤러 패널 -->
+            <div class="grid grid-cols-4 gap-2 items-center mt-6 pt-4 border-t border-amber-950/40">
+                
+                <!-- 노브 1: 볼륨 / 전원 -->
+                <div class="flex flex-col items-center knob-container">
+                    <span class="text-[8px] uppercase font-bold tracking-wider text-amber-600/80 mb-1">Power / Vol</span>
+                    <div class="relative w-14 h-14 bg-zinc-900 rounded-full border-4 border-zinc-700 shadow-xl flex items-center justify-center cursor-pointer" id="knob-volume">
+                        <div class="absolute top-1 w-1 h-3.5 bg-amber-500 rounded-sm origin-bottom" id="knob-vol-indicator" style="transform: rotate(-135deg);"></div>
+                        <div class="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center">
+                            <i data-lucide="power" class="w-4 h-4 text-zinc-500" id="power-icon"></i>
+                        </div>
+                    </div>
+                    <span class="text-[10px] mt-1 font-mono text-zinc-400" id="vol-lbl">OFF</span>
                 </div>
 
-                <div class="pl-4">
-                    <h2 class="retro-title text-2xl font-bold border-b-2 border-stone-400 pb-2 text-stone-800 tracking-wide flex items-center justify-between">
-                        <span>주파수 수신 대장</span>
-                        <span class="retro-mono text-xs text-stone-500 font-normal">Freq. Logbook</span>
-                    </h2>
-                    
-                    <p class="retro-mono text-xs text-stone-600 italic my-3 leading-relaxed">
-                        * 주파수에 할당된 유튜브 방송 링크 목록입니다. 주파수 수치가 다이얼 패널 수치와 매치될 때 노이즈가 완화되며 오디오가 융합됩니다!
-                    </p>
+                <!-- 노브 2: 밴드 토글 -->
+                <div class="flex flex-col items-center">
+                    <span class="text-[8px] uppercase font-bold tracking-wider text-amber-600/80 mb-1">Band Select</span>
+                    <div class="relative w-14 h-14 bg-zinc-900 rounded-full border-4 border-zinc-700 shadow-xl flex items-center justify-center cursor-pointer transition-transform" id="knob-band">
+                        <div class="absolute top-1 w-1 h-3.5 bg-red-500 rounded-sm" id="knob-band-indicator" style="transform: rotate(-45deg);"></div>
+                        <div class="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-600"></div>
+                    </div>
+                    <span class="text-[10px] mt-1 font-bold text-amber-500" id="band-lbl">AM</span>
+                </div>
 
-                    <!-- Station List -->
-                    <div class="max-h-48 overflow-y-auto border border-stone-300 rounded p-2 bg-stone-100/50 flex flex-col gap-1.5 scrollbar-thin">
-                        <div id="station-list" class="flex flex-col gap-1">
-                            <!-- Injected dynamically -->
+                <!-- 노브 3: 주파수 튜닝 휠 -->
+                <div class="flex flex-col items-center col-span-2 knob-container">
+                    <span class="text-[8px] uppercase font-bold tracking-wider text-amber-600/80 mb-1">Tuning Dial (Touch/Rotate)</span>
+                    <div class="flex items-center gap-1">
+                        <button class="w-8 h-8 rounded bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 active:bg-zinc-900 flex items-center justify-center text-amber-500 font-bold" id="btn-tune-down">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+
+                        <div class="relative w-16 h-16 bg-zinc-950 rounded-full border-4 border-zinc-800 shadow-2xl flex items-center justify-center cursor-pointer" id="knob-tuning">
+                            <div class="absolute top-1 w-1 h-3.5 bg-amber-400 rounded-sm" id="knob-tune-indicator" style="transform: rotate(0deg);"></div>
+                            <div class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center">
+                                <i data-lucide="radio" class="w-5 h-5 text-zinc-600"></i>
+                            </div>
                         </div>
+
+                        <button class="w-8 h-8 rounded bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 active:bg-zinc-900 flex items-center justify-center text-amber-500 font-bold" id="btn-tune-up">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <span class="text-xs mt-1 font-mono font-bold text-amber-500" id="freq-display">530.00 kHz</span>
+                </div>
+            </div>
+
+            <!-- 도움말 -->
+            <div class="mt-4 text-center">
+                <p class="text-[9px] text-amber-700/80">💡 화면의 원형 노브를 터치해 직접 회전시키거나, 주파수 유리창을 문질러 바늘을 움직일 수 있습니다.</p>
+            </div>
+        </div>
+
+        <!-- 오른쪽: 주파수 정보국 & 프리셋 매니저 -->
+        <div class="w-full lg:w-96 flex flex-col gap-6">
+            
+            <!-- 주파수 수동 등록기 -->
+            <div class="bg-stone-900/90 rounded-2xl p-5 border-2 border-amber-900/30 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-amber-900/30 pb-3 mb-4">
+                        <h3 class="font-serif text-base font-bold text-amber-500 flex items-center gap-2">
+                            <i data-lucide="list-music" class="w-5 h-5"></i>
+                            전파 주파수 프리셋 등록
+                        </h3>
                     </div>
 
-                    <!-- JSON Import/Export Dashboard Panel -->
-                    <div class="mt-3 bg-amber-100/70 border border-amber-300/60 rounded-lg p-2.5 flex flex-col gap-1.5 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <span class="retro-title text-xs font-bold text-amber-900 flex items-center gap-1">
-                                📁 JSON 데이터 관리
-                            </span>
-                            <span class="retro-mono text-[9px] text-amber-700/80">Backup & Restore</span>
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <label class="block text-xs text-amber-600/80 mb-1">방송국 명칭</label>
+                            <input type="text" id="station-name" placeholder="예: 경성 올디즈 라디오" class="w-full bg-black/50 border border-amber-900/50 rounded p-2 text-amber-100 placeholder-amber-900/50 focus:outline-none focus:border-amber-500">
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <!-- Export Button -->
-                            <button onclick="exportStationsToJSON()" class="flex items-center justify-center gap-1 bg-amber-800 hover:bg-amber-900 text-white font-bold py-1.5 px-2 rounded text-[11px] transition-all duration-200 shadow-sm active:scale-95">
-                                📥 JSON 내보내기
-                            </button>
-                            <!-- Import Trigger Button -->
-                            <button onclick="triggerImportFileInput()" class="flex items-center justify-center gap-1 bg-stone-800 hover:bg-stone-900 text-stone-100 font-bold py-1.5 px-2 rounded text-[11px] transition-all duration-200 shadow-sm active:scale-95">
-                                📤 JSON 불러오기
-                            </button>
-                            <!-- Hidden File Input for Import -->
-                            <input type="file" id="import-file-input" accept=".json" onchange="importStationsFromJSON(event)" class="hidden">
-                        </div>
-                    </div>
 
-                    <!-- Add/Edit Form -->
-                    <div class="mt-3 border-t border-stone-300 pt-2.5 flex flex-col gap-1.5">
-                        <h3 class="retro-title text-[13px] font-bold text-stone-800">새로운 방송 전파 등록</h3>
-                        
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="retro-mono text-[10px] text-stone-600 block">수신 밴드</label>
-                                <select id="form-band" class="w-full border border-stone-300 rounded p-1 text-[11px] bg-white text-stone-800 focus:outline-none">
+                                <label class="block text-xs text-amber-600/80 mb-1">밴드 분류</label>
+                                <select id="station-band" class="w-full bg-black/50 border border-amber-900/50 rounded p-2 text-amber-100 focus:outline-none focus:border-amber-500">
                                     <option value="AM">AM (kHz)</option>
-                                    <option value="SW">SW (MHz)</option>
+                                    <option value="SW1">SW1 (MHz)</option>
+                                    <option value="SW2">SW2 (MHz)</option>
+                                    <option value="SW3">SW3 (MHz)</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="retro-mono text-[10px] text-stone-600 block">수신 주파수</label>
-                                <input type="number" id="form-freq" step="any" placeholder="예: 740 또는 9.5" class="w-full border border-stone-300 rounded p-1 text-[11px] bg-white text-stone-800 focus:outline-none">
+                                <label class="block text-xs text-amber-600/80 mb-1">주파수</label>
+                                <input type="number" step="0.01" id="station-freq" placeholder="주파수 수치" class="w-full bg-black/50 border border-amber-900/50 rounded p-2 text-amber-100 placeholder-amber-900/50 focus:outline-none focus:border-amber-500">
                             </div>
                         </div>
 
                         <div>
-                            <label class="retro-mono text-[10px] text-stone-600 block">방송국 이름</label>
-                            <input type="text" id="form-title" placeholder="예: 시카고 재즈 라이브" class="w-full border border-stone-300 rounded p-1 text-[11px] bg-white text-stone-800 focus:outline-none">
+                            <label class="block text-xs text-amber-600/80 mb-1">미디어 스트림 URL (YouTube 또는 직접 주소)</label>
+                            <input type="text" id="station-url" placeholder="유튜브 동영상 링크 또는 미디어 소스 URL" class="w-full bg-black/50 border border-amber-900/50 rounded p-2 text-xs text-amber-100 placeholder-amber-900/50 focus:outline-none focus:border-amber-500">
                         </div>
 
-                        <div>
-                            <label class="retro-mono text-[10px] text-stone-600 block">유튜브 주소 (URL)</label>
-                            <input type="text" id="form-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-stone-300 rounded p-1 text-[11px] bg-white text-stone-800 focus:outline-none">
-                        </div>
-
-                        <div class="flex gap-2 justify-end mt-1">
-                            <button onclick="addOrUpdateStation()" class="retro-title bg-amber-800 hover:bg-amber-950 text-white font-bold py-1.5 px-4 rounded text-xs transition duration-200">
-                                📡 전파 인가하기
-                            </button>
-                        </div>
+                        <button id="btn-add-station" class="w-full bg-amber-800 hover:bg-amber-700 text-amber-100 font-bold py-2 rounded transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            주파수 방송국 저장
+                        </button>
                     </div>
+                </div>
 
+                <div class="mt-4 p-2.5 bg-amber-950/20 rounded border border-amber-900/20 text-[11px] text-amber-600/90 leading-relaxed">
+                    <p class="font-bold mb-1">💡 밴드별 전파 튜닝 범위:</p>
+                    <ul class="list-disc list-inside space-y-0.5 font-mono text-[10px]">
+                        <li>AM: 530 ~ 1600 kHz</li>
+                        <li>SW1: 3.30 ~ 7.50 MHz</li>
+                        <li>SW2: 7.50 ~ 15.00 MHz</li>
+                        <li>SW3: 15.00 ~ 21.95 MHz</li>
+                    </ul>
                 </div>
             </div>
 
+            <!-- 현재 저장된 채널 보드 (JSON 연동 포함) -->
+            <div class="bg-stone-900/90 rounded-2xl p-5 border-2 border-amber-900/30 shadow-xl flex-1 flex flex-col overflow-hidden min-h-[300px]">
+                <div class="flex flex-col gap-2 mb-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-serif text-sm font-bold text-amber-500">방송 주파수 목록</h3>
+                        <button id="btn-reset-stations" class="text-[10px] text-red-400 hover:underline flex items-center gap-1">
+                            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>초기화
+                        </button>
+                    </div>
+                    <!-- JSON 백업/복원 서브 버튼 그룹 -->
+                    <div class="flex items-center gap-2 border-t border-amber-900/20 pt-2 justify-between">
+                        <span class="text-[10px] text-amber-600/70">JSON 백업 도구:</span>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-export-json" class="text-[10px] bg-stone-800 hover:bg-stone-700 text-amber-400 px-2 py-1 rounded flex items-center gap-1 border border-amber-900/30">
+                                <i data-lucide="download" class="w-3 h-3"></i>내보내기
+                            </button>
+                            <button id="btn-import-json" class="text-[10px] bg-stone-800 hover:bg-stone-700 text-amber-400 px-2 py-1 rounded flex items-center gap-1 border border-amber-900/30">
+                                <i data-lucide="upload" class="w-3 h-3"></i>가져오기
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 숨겨진 파일 선택 Input -->
+                    <input type="file" id="file-import-json" class="hidden" accept=".json">
+                </div>
+                
+                <!-- 채널 리스트 드롭다운 -->
+                <div id="station-list" class="space-y-2 overflow-y-auto pr-1 flex-1 text-xs"></div>
+            </div>
         </div>
-
     </div>
 
-    <!-- Alert system modal replacement -->
-    <div id="retro-alert" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-amber-950 text-amber-100 border border-amber-600 px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 z-50 opacity-0 pointer-events-none transition-all duration-300">
-        <span class="retro-mono text-sm" id="alert-text">시스템 알림</span>
+    <!-- 하단 라이센스 -->
+    <div class="mt-8 text-center text-[10px] text-zinc-600 max-w-lg">
+        <p>1940s Vintage Vacuum Tube Radio. Built with Advanced Rotation Gesture Controls & JSON Backup/Restore.</p>
     </div>
 
-    <!-- Footer -->
-    <footer class="w-full text-center py-4 border-t border-stone-800/40 text-[10px] retro-mono text-stone-500 mt-8">
-        MADE FOR RETRO LOVERS &bull; AUDIO DESIGN POWERED BY WEB AUDIO API &bull; 1946 SUPERHETERODYNE AM/SW REPLICA
-    </footer>
+    <!-- 맞춤형 Retro Confirmation 모달 (IFrame 최적화용) -->
+    <div id="retro-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-stone-900 border-2 border-amber-600 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl mx-4">
+            <h4 class="font-serif text-base font-bold text-amber-500 mb-2 flex items-center justify-center gap-2">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500"></i>
+                <span id="modal-title">경고</span>
+            </h4>
+            <p id="modal-message" class="text-xs text-amber-100/90 leading-relaxed mb-6">정말로 실행하시겠습니까?</p>
+            <div class="flex gap-3 justify-center">
+                <button id="modal-btn-cancel" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold px-4 py-2 rounded text-xs transition-colors">
+                    취소
+                </button>
+                <button id="modal-btn-confirm" class="bg-amber-800 hover:bg-amber-700 text-amber-100 font-bold px-4 py-2 rounded text-xs transition-colors">
+                    확인
+                </button>
+            </div>
+        </div>
+    </div>
 
-    <!-- YouTube Player IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- 토스트 메시지 팝업 -->
+    <div id="toast-message" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-950 border-2 border-amber-600 text-amber-100 py-2.5 px-6 rounded-full shadow-2xl text-xs font-bold tracking-wide transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-amber-400"></i>
+        <span id="toast-text">알림 메시지</span>
+    </div>
 
     <script>
-        /* --- APPLICATION STATE --- */
-        let powerOn = false;
-        let activeBand = 'AM'; // 'AM' or 'SW'
-        let currentFreq = 740; // Default AM frequency
+        // --- 글로벌 데이터 및 상태 정의 ---
+        let radioPower = false;
+        let masterVolume = 0.5; // 0.0 ~ 1.0 (실제 연동값)
+        let currentBand = 'AM'; // 'AM', 'SW1', 'SW2', 'SW3'
+        let currentDialPos = 30; // 다이얼 바늘 물리적 위치 (0 ~ 100)
+        let currentFrequency = 851; // 가변 계산된 주파수
 
-        // Default Radio Station List (Fallback if local storage is empty)
-        const DEFAULT_STATIONS = [
-            { id: 'st-1', band: 'AM', freq: 740, title: 'Glenn Miller & Big Band Radio', url: 'https://www.youtube.com/watch?v=6v7L8m0a0H8' },
-            { id: 'st-2', band: 'AM', freq: 1100, title: '1940s Classic Radio Drama - "Suspense"', url: 'https://www.youtube.com/watch?v=F3_6b8Y7V8w' },
-            { id: 'st-3', band: 'SW', freq: 8.0, title: 'Vintage World War II Propaganda & Broadcasts', url: 'https://www.youtube.com/watch?v=Gk6WCH_B7V8' },
-            { id: 'st-4', band: 'SW', freq: 12.0, title: 'Deep Space Signals & Retro Synth Ambient', url: 'https://www.youtube.com/watch?v=f2n_y84HqNY' }
-        ];
-
-        // Load stations from Local Storage OR fall back to defaults
-        let stations = [];
-        try {
-            const stored = localStorage.getItem('vacuum_radio_stations_v2');
-            if (stored) {
-                stations = JSON.parse(stored);
-            } else {
-                stations = [...DEFAULT_STATIONS];
-            }
-        } catch (e) {
-            console.error("로컬 스토리지 읽기 에러:", e);
-            stations = [...DEFAULT_STATIONS];
-        }
-
-        /* --- NON-LINEAR PIECEWISE SCALE CONFIGURATIONS --- */
-        const AM_POINTS = [
-            { p: 0, f: 530 },
-            { p: 20, f: 700 },
-            { p: 40, f: 900 },
-            { p: 60, f: 1100 },
-            { p: 80, f: 1300 },
-            { p: 100, f: 1600 }
-        ];
-
-        const SW_POINTS = [
-            { p: 0, f: 5.9 },
-            { p: 20, f: 8.0 },
-            { p: 40, f: 10.0 },
-            { p: 60, f: 12.0 },
-            { p: 80, f: 15.0 },
-            { p: 100, f: 18.0 }
-        ];
-
-        // Piecewise Interpolation Functions
-        function percentToFreq(p, points) {
-            if (p <= points[0].p) return points[0].f;
-            if (p >= points[points.length - 1].p) return points[points.length - 1].f;
-            
-            for (let i = 0; i < points.length - 1; i++) {
-                const pt1 = points[i];
-                const pt2 = points[i+1];
-                if (p >= pt1.p && p <= pt2.p) {
-                    const ratio = (p - pt1.p) / (pt2.p - pt1.p);
-                    return pt1.f + ratio * (pt2.f - pt1.f);
-                }
-            }
-            return points[0].f;
-        }
-
-        function freqToPercent(f, points) {
-            if (f <= points[0].f) return points[0].p;
-            if (f >= points[points.length - 1].f) return points[points.length - 1].p;
-            
-            for (let i = 0; i < points.length - 1; i++) {
-                const pt1 = points[i];
-                const pt2 = points[i+1];
-                if (f >= pt1.f && f <= pt2.f) {
-                    const ratio = (f - pt1.f) / (pt2.f - pt1.f);
-                    return pt1.p + ratio * (pt2.p - pt1.p);
-                }
-            }
-            return points[0].p;
-        }
-
-        /* --- WEB AUDIO API (ANALOG SYNTHESIS) --- */
-        let audioCtx = null;
-        let whiteNoise = null;
-        let filterNode = null;
-        let humOscillator = null;
-        let humFilter = null;
-        let whistleOscillator = null;
-        
-        let gainStatic = null;
-        let gainHum = null;
-        let gainWhistle = null;
-        let masterGain = null;
-
-        let knobVolumeValue = 75; // 0 to 100
-        let tuningSliderValue = 18; // 0 to 100 representing position on dial scale
-
-        // Custom toast alerter
-        function triggerAlert(message) {
-            const alertEl = document.getElementById('retro-alert');
-            const alertText = document.getElementById('alert-text');
-            alertText.innerText = message;
-            alertEl.classList.remove('opacity-0', 'pointer-events-none');
-            alertEl.classList.add('opacity-100');
-            setTimeout(() => {
-                alertEl.classList.remove('opacity-100');
-                alertEl.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
-        }
-
-        /* --- LOCAL STORAGE SAVER --- */
-        function saveStationsToLocalStorage() {
-            try {
-                localStorage.setItem('vacuum_radio_stations_v2', JSON.stringify(stations));
-            } catch (e) {
-                console.error("로컬 스토리지 저장 실패:", e);
-            }
-        }
-
-        /* --- JSON FILE EXPORT / IMPORT --- */
-        function exportStationsToJSON() {
-            try {
-                const jsonString = JSON.stringify(stations, null, 2);
-                const blob = new Blob([jsonString], { type: "application/json;charset=utf-8;" });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement("a");
-                link.setAttribute("href", url);
-                link.setAttribute("download", `vacuum_radio_stations_${Date.now()}.json`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                triggerAlert("주파수 리스트가 JSON 백업 파일로 내보내졌습니다!");
-            } catch (err) {
-                triggerAlert("내보내기 에러: " + err.message);
-            }
-        }
-
-        function triggerImportFileInput() {
-            document.getElementById('import-file-input').click();
-        }
-
-        function importStationsFromJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    if (Array.isArray(importedData)) {
-                        const isValid = importedData.every(item => {
-                            return item && typeof item === 'object' &&
-                                   'band' in item && 'freq' in item &&
-                                   'title' in item && 'url' in item;
-                        });
-
-                        if (isValid) {
-                            stations = importedData.map((item, idx) => ({
-                                id: item.id || `st-imported-${idx}-${Date.now()}`,
-                                band: item.band === 'SW' ? 'SW' : 'AM',
-                                freq: parseFloat(item.freq),
-                                title: String(item.title),
-                                url: String(item.url)
-                            }));
-
-                            saveStationsToLocalStorage();
-                            renderStations();
-                            updateSystemVolumeAndTuning();
-                            triggerAlert("백업 파일의 주파수 대장을 성공적으로 복원했습니다!");
-                        } else {
-                            triggerAlert("파일 내용 분석 실패: 올바른 주파수 형식이 아닙니다.");
-                        }
-                    } else {
-                        triggerAlert("파일 내용 분석 실패: 주파수 정보는 배열 구조여야 합니다.");
-                    }
-                } catch (err) {
-                    triggerAlert("JSON 문법 파싱 오류가 감지되었습니다.");
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = ""; 
-        }
-
-        /* --- PREPARATION ON WINDOW LOAD --- */
-        window.onload = function() {
-            renderStations();
-            updateDialNeedle();
-            
-            // Interaction setup for Knobs (Volume and Tuning via Vertical Drag)
-            setupKnobDrag('knob-volume-container', (deltaY) => {
-                knobVolumeValue = Math.min(100, Math.max(0, knobVolumeValue - deltaY * 0.8));
-                document.getElementById('knob-volume').style.transform = `rotate(${(knobVolumeValue - 50) * 2.8}deg)`;
-                updateVolumeControls();
-            });
-
-            setupKnobDrag('knob-tuning-container', (deltaY) => {
-                tuningSliderValue = Math.min(100, Math.max(0, tuningSliderValue - deltaY * 0.22));
-                document.getElementById('knob-tuning').style.transform = `rotate(${(tuningSliderValue - 50) * 5.6}deg)`;
-                document.getElementById('tuning-slider').value = tuningSliderValue;
-                updateDialNeedle();
-            });
-
-            // Dual Control: Tuning slider underneath dial glass
-            document.getElementById('tuning-slider').addEventListener('input', (e) => {
-                tuningSliderValue = parseFloat(e.target.value);
-                document.getElementById('knob-tuning').style.transform = `rotate(${(tuningSliderValue - 50) * 5.6}deg)`;
-                updateDialNeedle();
-            });
-
-            // Power button setup
-            document.getElementById('power-btn').addEventListener('click', togglePower);
+        const bandRanges = {
+            'AM': { min: 530, max: 1600, unit: 'kHz', tolerance: 25 },
+            'SW1': { min: 3.30, max: 7.50, unit: 'MHz', tolerance: 0.12 },
+            'SW2': { min: 7.50, max: 15.00, unit: 'MHz', tolerance: 0.20 },
+            'SW3': { min: 15.00, max: 21.95, unit: 'MHz', tolerance: 0.25 }
         };
 
-        /* --- YOUTUBE PLAYER INTERACTION CODE --- */
-        let ytPlayer = null;
-        let ytReady = false;
-        let currentPlayingVideoId = "";
+        const defaultStations = [
+            { id: '1', name: "경성 스윙 올디즈 (Jazz Swing)", band: "AM", freq: 740, url: "https://www.youtube.com/watch?v=R9N_M6zD4S0" },
+            { id: '2', name: "1940s 레트로 재즈 오케스트라", band: "AM", freq: 1120, url: "https://www.youtube.com/watch?v=sgS-S_g7vXg" },
+            { id: '3', name: "빈티지 로파이 단파 라디오 극장", band: "SW1", freq: 6.05, url: "https://www.youtube.com/watch?v=FjIAdZ9rD7U" },
+            { id: '4', name: "미스터리 국경 단파 시그널", band: "SW2", freq: 11.85, url: "https://www.youtube.com/watch?v=z8S5pXkP1a4" },
+            { id: '5', name: "클래식 댄스 스윙 레코드", band: "SW3", freq: 17.75, url: "https://www.youtube.com/watch?v=Yf0S7mreFsw" }
+        ];
 
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('yt-player', {
-                height: '100%',
-                width: '100%',
+        let stations = [...defaultStations];
+
+        // --- 오디오 세션 제어용 노드 ---
+        let audioCtx = null;
+        let staticNode = null;
+        let staticGain = null;
+        let youtubePlayer = null;
+        let ytApiLoaded = false;
+        let currentPlayingStationId = null;
+        const audioStreamPlayer = document.getElementById('audio-stream-player');
+
+        // --- DOM 인스턴스 ---
+        const knobVolume = document.getElementById('knob-volume');
+        const knobVolIndicator = document.getElementById('knob-vol-indicator');
+        const volLbl = document.getElementById('vol-lbl');
+        const powerIcon = document.getElementById('power-icon');
+        
+        const knobBand = document.getElementById('knob-band');
+        const knobBandIndicator = document.getElementById('knob-band-indicator');
+        const bandLbl = document.getElementById('band-lbl');
+        
+        const knobTuning = document.getElementById('knob-tuning');
+        const knobTuneIndicator = document.getElementById('knob-tune-indicator');
+        const dialGlassWindow = document.getElementById('dial-glass-window');
+        const tuningNeedle = document.getElementById('tuning-needle');
+        const freqDisplay = document.getElementById('freq-display');
+        
+        const btnTuneUp = document.getElementById('btn-tune-up');
+        const btnTuneDown = document.getElementById('btn-tune-down');
+        
+        const signalLight = document.getElementById('signal-light');
+        const signalText = document.getElementById('signal-text');
+        
+        const tube1 = document.getElementById('tube-1');
+        const tube3a = document.getElementById('tube-3a');
+        const tube3b = document.getElementById('tube-3b');
+        
+        const magicEyeWedgeL = document.getElementById('magic-eye-wedge-l');
+        const magicEyeWedgeR = document.getElementById('magic-eye-wedge-r');
+        
+        const presetMarkersContainer = document.getElementById('preset-markers');
+        const stationListContainer = document.getElementById('station-list');
+
+        // --- 유튜브 플레이어 API 비동기 임포트 ---
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        window.onYouTubeIframeAPIReady = function() {
+            youtubePlayer = new YT.Player('youtube-iframe-target', {
+                height: '100',
+                width: '100',
                 videoId: '',
                 playerVars: {
-                    'autoplay': 1,
+                    'playsinline': 1,
                     'controls': 0,
                     'disablekb': 1,
                     'fs': 0,
-                    'modestbranding': 1,
-                    'playsinline': 1,
                     'rel': 0,
-                    'mute': 1, // Start muted to strictly pass browser autoplay block policies
-                    'origin': window.location.origin
+                    'modestbranding': 1
                 },
                 events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    'onReady': () => { ytApiLoaded = true; },
+                    'onError': () => { showToast("음원을 재생할 수 없습니다. (보안 정책 적용)"); }
                 }
             });
-        }
+        };
 
-        function onPlayerReady(event) {
-            ytReady = true;
-        }
-
-        function onPlayerStateChange(event) {
-            // Keep the tuner volume updated correctly upon any internal youtube state switch
-            if (event.data === YT.PlayerState.PLAYING) {
-                updateSystemVolumeAndTuning();
-            }
-        }
-
-        function extractVideoId(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        }
-
-        // BROWSER SAFETY NET: Hard release of the silent mute flag on user's manual action (implicitly triggered)
-        function forceReleaseAudioImplicit() {
-            if (!powerOn) return;
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            if (ytReady && ytPlayer) {
-                try {
-                    ytPlayer.unMute();
-                    ytPlayer.playVideo();
-                } catch(e) {}
-            }
-        }
-
-        /* --- ROTATIONAL KNOB MATH/LOGIC --- */
-        function setupKnobDrag(id, onDrag) {
-            const el = document.getElementById(id);
-            let startY = 0;
-            let isDragging = false;
-
-            const startDrag = (e) => {
-                isDragging = true;
-                startY = e.touches ? e.touches[0].clientY : e.clientY;
-                if (!audioCtx) initAudio(); 
-                document.addEventListener('mousemove', drag);
-                document.addEventListener('mouseup', endDrag);
-                document.addEventListener('touchmove', drag, { passive: false });
-                document.addEventListener('touchend', endDrag);
-            };
-
-            const drag = (e) => {
-                if (!isDragging) return;
-                if (e.cancelable) e.preventDefault();
-                const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-                const deltaY = currentY - startY;
-                startY = currentY;
-                onDrag(deltaY);
-            };
-
-            const endDrag = () => {
-                isDragging = false;
-                document.removeEventListener('mousemove', drag);
-                document.removeEventListener('mouseup', endDrag);
-                document.removeEventListener('touchmove', drag);
-                document.removeEventListener('touchend', endDrag);
-                
-                // Force an audio context state assertion & unlock stream
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-                forceReleaseAudioImplicit();
-            };
-
-            el.addEventListener('mousedown', startDrag);
-            el.addEventListener('touchstart', startDrag, { passive: true });
-        }
-
-        /* --- WEB AUDIO CONTROLLER --- */
-        function initAudio() {
+        // --- 웹 오디오 정전기(노이즈) 노드 수립 ---
+        function initNoiseGenerator() {
             if (audioCtx) return;
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // 1. Generate White Noise Buffer
                 const bufferSize = 2 * audioCtx.sampleRate;
                 const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
                 const output = noiseBuffer.getChannelData(0);
@@ -765,515 +501,667 @@
                     output[i] = Math.random() * 2 - 1;
                 }
                 
-                whiteNoise = audioCtx.createBufferSource();
-                whiteNoise.buffer = noiseBuffer;
-                whiteNoise.loop = true;
-
-                // Create Bandpass filter to make noise sound like old speakers
-                filterNode = audioCtx.createBiquadFilter();
-                filterNode.type = 'bandpass';
-                filterNode.frequency.value = 850; 
-                filterNode.Q.value = 1.0;
-
-                gainStatic = audioCtx.createGain();
-                gainStatic.gain.value = 0;
-
-                // 2. Generate 60Hz Power Hum Oscillator
-                humOscillator = audioCtx.createOscillator();
-                humOscillator.type = 'triangle'; 
-                humOscillator.frequency.value = 60;
-
-                humFilter = audioCtx.createBiquadFilter();
-                humFilter.type = 'lowpass';
-                humFilter.frequency.value = 120;
-
-                gainHum = audioCtx.createGain();
-                gainHum.gain.value = 0;
-
-                // 3. Shortwave whistle simulator
-                whistleOscillator = audioCtx.createOscillator();
-                whistleOscillator.type = 'sine';
-                whistleOscillator.frequency.value = 1000;
-
-                gainWhistle = audioCtx.createGain();
-                gainWhistle.gain.value = 0;
-
-                // 4. Connect everything to main master gain node
-                masterGain = audioCtx.createGain();
-                masterGain.gain.value = 0; 
-
-                whiteNoise.connect(filterNode);
-                filterNode.connect(gainStatic);
-                gainStatic.connect(masterGain);
-
-                humOscillator.connect(humFilter);
-                humFilter.connect(gainHum);
-                gainHum.connect(masterGain);
-
-                whistleOscillator.connect(gainWhistle);
-                gainWhistle.connect(masterGain);
-
-                masterGain.connect(audioCtx.destination);
-
-                // Fire up oscillators
-                whiteNoise.start(0);
-                humOscillator.start(0);
-                whistleOscillator.start(0);
-
+                staticNode = audioCtx.createBufferSource();
+                staticNode.buffer = noiseBuffer;
+                staticNode.loop = true;
+                
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+                filter.Q.value = 1.0;
+                
+                staticGain = audioCtx.createGain();
+                staticGain.gain.value = 0.0;
+                
+                staticNode.connect(filter);
+                filter.connect(staticGain);
+                staticGain.connect(audioCtx.destination);
+                
+                staticNode.start();
             } catch(e) {
-                console.error("Web Audio API initialization failed:", e);
+                console.error(e);
             }
         }
 
-        /* --- FRONT INTERFACE ACTIONS & LOGIC --- */
-
-        function flipRadio(backside) {
-            const card = document.getElementById('radio-container');
-            if (backside) {
-                card.classList.add('rotate-y-180');
-            } else {
-                card.classList.remove('rotate-y-180');
-            }
-        }
-
-        function togglePower() {
-            if (!audioCtx) initAudio();
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
-            powerOn = !powerOn;
-            const toggle = document.getElementById('power-toggle');
-            const indicator = document.getElementById('power-indicator-text');
-            const filaments = document.querySelectorAll('.tube-filament');
-            const dialLight = document.getElementById('dial-light');
-            const dialLightAmb = document.getElementById('dial-light-ambient');
-            const magicEye = document.getElementById('magic-eye');
-            const magicEyeBeam = document.getElementById('magic-eye-beam');
-
-            if (powerOn) {
-                toggle.classList.remove('translate-y-0');
-                toggle.classList.add('-translate-y-2');
-                indicator.innerText = "WARM-UP";
-                indicator.classList.remove('text-red-600/70');
-                indicator.classList.add('text-orange-500', 'animate-pulse');
-
-                filaments.forEach(f => {
-                    f.style.opacity = '1';
-                    f.style.background = 'radial-gradient(circle, rgba(251,146,60,0.95) 0%, rgba(239,68,68,0.7) 50%, rgba(220,38,38,0) 100%)';
-                    f.style.filter = 'drop-shadow(0 0 12px rgba(249,115,22,0.95))';
-                });
-
-                dialLight.style.backgroundColor = 'rgba(245,158,11,0.25)';
-                dialLightAmb.style.backgroundColor = 'rgba(251,191,36,0.35)';
-
-                // Active un-muting attempt on user gesture
-                if (ytReady && ytPlayer) {
-                    try {
-                        ytPlayer.playVideo();
-                        ytPlayer.unMute();
-                    } catch(e) {}
-                }
-
-                setTimeout(() => {
-                    if (!powerOn) return; 
-                    indicator.innerText = "ONLINE";
-                    indicator.classList.remove('animate-pulse', 'text-orange-500');
-                    indicator.classList.add('text-green-500');
-                    
-                    magicEye.style.backgroundColor = '#14532d';
-                    magicEyeBeam.style.opacity = '0.9';
-
-                    masterGain.gain.setTargetAtTime((knobVolumeValue / 100) * 0.75, audioCtx.currentTime, 0.4);
-                    updateSystemVolumeAndTuning();
-                }, 2300);
-
-            } else {
-                toggle.classList.remove('-translate-y-2');
-                toggle.classList.add('translate-y-0');
-                indicator.innerText = "OFF";
-                indicator.classList.remove('text-green-500', 'text-orange-500', 'animate-pulse');
-                indicator.classList.add('text-red-600/70');
-
-                filaments.forEach(f => {
-                    f.style.opacity = '0';
-                    f.style.filter = 'drop-shadow(0 0 0px rgba(0,0,0,0))';
-                });
-
-                dialLight.style.backgroundColor = 'rgba(245,158,11,0)';
-                dialLightAmb.style.backgroundColor = 'rgba(251,191,36,0)';
-
-                magicEye.style.backgroundColor = '#0c0a09';
-                magicEyeBeam.style.opacity = '0';
-
-                if (masterGain) {
-                    masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-                }
-                
-                if (ytReady && ytPlayer) {
-                    ytPlayer.pauseVideo();
-                }
-                document.getElementById('playing-title').innerText = "No Signal";
-            }
-        }
-
-        function setBand(band) {
-            if (activeBand === band) return;
-            activeBand = band;
-
-            const slider = document.getElementById('band-slider');
-            const amBtn = document.getElementById('btn-band-am');
-            const swBtn = document.getElementById('btn-band-sw');
-
-            if (band === 'AM') {
-                slider.style.left = '4px';
-                slider.style.width = '46%';
-                amBtn.classList.remove('text-stone-400');
-                amBtn.classList.add('text-amber-200');
-                swBtn.classList.remove('text-amber-200');
-                swBtn.classList.add('text-stone-400');
-            } else {
-                slider.style.left = '50%';
-                slider.style.width = '46%';
-                swBtn.classList.remove('text-stone-400');
-                swBtn.classList.add('text-amber-200');
-                amBtn.classList.remove('text-amber-200');
-                amBtn.classList.add('text-stone-400');
-            }
-
-            if (audioCtx) {
-                if (activeBand === 'SW') {
-                    filterNode.frequency.value = 1750; 
-                    filterNode.Q.value = 2.2;
-                } else {
-                    filterNode.frequency.value = 850; 
-                    filterNode.Q.value = 1.0;
-                }
-            }
-
-            updateDialNeedle();
-        }
-
-        function updateDialNeedle() {
-            const needle = document.getElementById('tuning-needle');
-            needle.style.left = `${tuningSliderValue}%`;
-
-            if (activeBand === 'AM') {
-                const rawFreq = percentToFreq(tuningSliderValue, AM_POINTS);
-                currentFreq = Math.round(rawFreq);
-            } else {
-                const rawFreq = percentToFreq(tuningSliderValue, SW_POINTS);
-                currentFreq = parseFloat(rawFreq.toFixed(2));
-            }
-
-            updateSystemVolumeAndTuning();
-        }
-
-        function updateVolumeControls() {
-            if (!powerOn || !audioCtx) return;
-            masterGain.gain.setTargetAtTime((knobVolumeValue / 100) * 0.75, audioCtx.currentTime, 0.1);
-            updateSystemVolumeAndTuning();
-        }
-
-        /* --- THROTLED & DEBOUNCED API SINKHOLES (PREVENTS YOUTUBE CRASHING) --- */
-        let lastSetVolume = -1;
-        let ytVolumeThrottleTimer = null;
-        let ytLoadDebounceTimer = null;
-
-        // 1. YouTube Volume Throttle: Limit API call speed during fast knob/tuning sweeps
-        function setYouTubeVolumeThrottled(targetVolume) {
-            if (!ytReady || !ytPlayer) return;
-            if (targetVolume === lastSetVolume) return;
-
-            // Immediate mute if 0
-            if (targetVolume === 0) {
-                try {
-                    ytPlayer.setVolume(0);
-                    lastSetVolume = 0;
-                } catch(e){}
-                return;
-            }
-
-            if (!ytVolumeThrottleTimer) {
-                ytVolumeThrottleTimer = setTimeout(() => {
-                    try {
-                        ytPlayer.setVolume(targetVolume);
-                        lastSetVolume = targetVolume;
-                    } catch(e){}
-                    ytVolumeThrottleTimer = null;
-                }, 80); // Restrict to maximum 12 calls per second
-            }
-        }
-
-        // 2. YouTube Video Loader Debounce: Wait 300ms until slider stays near a station before calling load API
-        function loadYouTubeVideoDebounced(videoId) {
-            if (currentPlayingVideoId === videoId) {
-                // If it's already selected but not playing, trigger play
-                if (ytReady && ytPlayer && ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) {
-                    try {
-                        ytPlayer.playVideo();
-                        ytPlayer.unMute();
-                    } catch(e){}
-                }
-                return;
-            }
-
-            if (ytLoadDebounceTimer) clearTimeout(ytLoadDebounceTimer);
-
-            ytLoadDebounceTimer = setTimeout(() => {
-                currentPlayingVideoId = videoId;
-                if (ytReady && ytPlayer) {
-                    try {
-                        ytPlayer.loadVideoById({
-                            videoId: videoId,
-                            startSeconds: 0,
-                            suggestedQuality: 'small'
-                        });
-                        ytPlayer.unMute();
-                        ytPlayer.playVideo();
-                    } catch(e){
-                        console.error("비디오 동조 에러:", e);
-                    }
-                }
-            }, 300); // Wait for tuning dial to stabilize
-        }
-
-        /* --- REAL-TIME TUNING, SNAP & GRADUAL VOLUME FADE IN/OUT --- */
-        function updateSystemVolumeAndTuning() {
-            if (!powerOn || !audioCtx) return;
-
-            let closestStation = null;
-            let minDiff = Infinity;
+        // --- IFrame 맞춤 커스텀 확인 모달 제어 로직 ---
+        let modalConfirmCallback = null;
+        function showRetroConfirm(title, message, callback) {
+            const modal = document.getElementById('retro-modal');
+            const mTitle = document.getElementById('modal-title');
+            const mMsg = document.getElementById('modal-message');
             
-            // Widened the signal acceptance band:
-            let maxDistanceAllowed = (activeBand === 'AM') ? 140 : 1.6; 
-            const snapThreshold = (activeBand === 'AM') ? 15 : 0.22; 
+            mTitle.innerText = title;
+            mMsg.innerText = message;
+            modalConfirmCallback = callback;
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
 
-            stations.forEach(station => {
-                if (station.band === activeBand) {
-                    let diff = Math.abs(currentFreq - station.freq);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestStation = station;
-                    }
-                }
-            });
+        function closeRetroConfirm() {
+            const modal = document.getElementById('retro-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalConfirmCallback = null;
+            }, 300);
+        }
 
-            let activeFreq = currentFreq;
-            if (closestStation && minDiff < snapThreshold) {
-                activeFreq = closestStation.freq;
-                minDiff = 0; 
-            }
+        document.getElementById('modal-btn-cancel').addEventListener('click', closeRetroConfirm);
+        document.getElementById('modal-btn-confirm').addEventListener('click', () => {
+            if (modalConfirmCallback) modalConfirmCallback();
+            closeRetroConfirm();
+        });
 
-            let proximity = 0;
-            if (closestStation && minDiff < maxDistanceAllowed) {
-                proximity = 1.0 - (minDiff / maxDistanceAllowed);
-            }
+        // --- 알림 유틸리티 ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            toastText.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+        }
 
-            // Cubic curve for ultra-organic vintage radio fading
-            let stationVolumeMultiplier = Math.pow(proximity, 3); 
-            let staticNoiseLevel = Math.max(0.04, 1.0 - Math.pow(proximity, 1.5));
-            let humLevel = 0.12 + (1.0 - proximity) * 0.18;
-
-            // Apply synthesizer gains via Web Audio API
-            gainStatic.gain.setTargetAtTime(staticNoiseLevel * 0.52, audioCtx.currentTime, 0.08);
-            gainHum.gain.setTargetAtTime(humLevel * 0.35, audioCtx.currentTime, 0.1);
-
-            const magicEyeBeam = document.getElementById('magic-eye-beam');
-            if (magicEyeBeam) {
-                let beamScale = 0.12 + (proximity * 0.88);
-                let wobble = (proximity > 0.1 && proximity < 0.85) ? (Math.random() * 0.09 - 0.045) : 0;
-                magicEyeBeam.style.transform = `scaleY(${Math.max(0.12, beamScale + wobble)})`;
-                magicEyeBeam.style.filter = `blur(${1.6 - proximity * 1.5}px) drop-shadow(0 0 ${beamScale * 12}px #22c55e)`;
-            }
-
-            const tuneLockDot = document.getElementById('tune-lock-dot');
-            const tunePrecisionDisp = document.getElementById('tuning-precision-display');
-            if (tuneLockDot && tunePrecisionDisp) {
-                if (proximity > 0.9) {
-                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]";
-                    tunePrecisionDisp.innerText = "TUNED";
-                    tunePrecisionDisp.className = "retro-mono text-[10px] text-green-700 font-extrabold uppercase tracking-wider";
-                } else if (proximity > 0.25) {
-                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_6px_#f59e0b] animate-ping";
-                    tunePrecisionDisp.innerText = "WEAK SIGNAL";
-                    tunePrecisionDisp.className = "retro-mono text-[10px] text-amber-700 font-bold uppercase tracking-wider";
-                } else {
-                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-stone-500/40";
-                    tunePrecisionDisp.innerText = "NO SIGNAL";
-                    tunePrecisionDisp.className = "retro-mono text-[10px] text-stone-500 font-bold uppercase tracking-wider";
-                }
-            }
-
-            const needle = document.getElementById('tuning-needle');
-            if (needle && proximity > 0.1 && proximity < 0.75) {
-                let jitter = (Math.random() * 0.16 - 0.08);
-                needle.style.transform = `translateX(${jitter}px)`;
-            } else if (needle) {
-                needle.style.transform = 'translateX(0px)';
-            }
-
-            if (activeBand === 'SW' && proximity > 0.05 && proximity < 0.95) {
-                let frequencyDev = minDiff / maxDistanceAllowed; 
-                let whistlePitch = 150 + (frequencyDev * 1800); 
-                whistleOscillator.frequency.setTargetAtTime(whistlePitch, audioCtx.currentTime, 0.04);
-
-                let whistleVol = Math.sin(proximity * Math.PI) * (1.0 - proximity) * 0.18;
-                gainWhistle.gain.setTargetAtTime(whistleVol, audioCtx.currentTime, 0.08);
+        // --- 주파수 동기화 및 바늘 이동 ---
+        function updateFrequencyByDial() {
+            const range = bandRanges[currentBand];
+            currentFrequency = range.min + (currentDialPos / 100) * (range.max - range.min);
+            
+            if (currentBand === 'AM') {
+                freqDisplay.innerText = `${Math.round(currentFrequency)} kHz`;
             } else {
-                gainWhistle.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
+                freqDisplay.innerText = `${currentFrequency.toFixed(2)} MHz`;
             }
+            
+            tuningNeedle.style.left = `calc(${currentDialPos}% * 0.82 + 9%)`; 
+            processTuningAudio();
+        }
 
-            // Dynamic throttling to resolve freezing
-            if (ytReady && ytPlayer) {
-                if (closestStation && proximity > 0.0) {
-                    const videoId = extractVideoId(closestStation.url);
-                    if (videoId) {
-                        loadYouTubeVideoDebounced(videoId);
+        function setFrequencyValue(val, band) {
+            if (band !== currentBand) {
+                currentBand = band;
+                syncBandSelectorUI();
+            }
+            const range = bandRanges[currentBand];
+            let clampedVal = Math.max(range.min, Math.min(range.max, val));
+            currentDialPos = ((clampedVal - range.min) / (range.max - range.min)) * 100;
+            
+            const rotation = (currentDialPos / 100) * 360;
+            knobTuneIndicator.style.transform = `rotate(${rotation}deg)`;
+            
+            updateFrequencyByDial();
+        }
 
-                        // Throttled volume sync
-                        let finalYTVolume = Math.round(stationVolumeMultiplier * knobVolumeValue);
-                        setYouTubeVolumeThrottled(finalYTVolume);
-                    }
-                } else {
-                    setYouTubeVolumeThrottled(0);
+        function rotateBand() {
+            const bands = ['AM', 'SW1', 'SW2', 'SW3'];
+            let nextIndex = (bands.indexOf(currentBand) + 1) % bands.length;
+            currentBand = bands[nextIndex];
+            
+            syncBandSelectorUI();
+            updateFrequencyByDial();
+            renderPresetMarkers();
+            showToast(`${currentBand} 밴드로 세팅`);
+        }
+
+        function syncBandSelectorUI() {
+            bandLbl.innerText = currentBand;
+            const rotationMap = { 'AM': -45, 'SW1': 15, 'SW2': 75, 'SW3': 135 };
+            knobBandIndicator.style.transform = `rotate(${rotationMap[currentBand]}deg)`;
+            
+            document.getElementById('scale-am').classList.add('opacity-40');
+            document.getElementById('scale-sw1').classList.add('opacity-40');
+            document.getElementById('scale-sw2').classList.add('opacity-40');
+            document.getElementById('scale-sw3').classList.add('opacity-40');
+            
+            document.getElementById(`scale-${currentBand.toLowerCase()}`).classList.remove('opacity-40');
+        }
+
+        // --- 전원 제어 ---
+        function togglePower() {
+            if (!radioPower) {
+                radioPower = true;
+                volLbl.innerText = `${Math.round(masterVolume * 100)}%`;
+                powerIcon.className = "w-4 h-4 text-green-500 drop-shadow-[0_0_5px_rgba(34,197,94,0.8)]";
+                
+                tube1.style.background = '#f97316';
+                tube1.style.boxShadow = '0 0 15px #ea580c, 0 0 30px #ea580c';
+                tube3a.style.background = '#f97316';
+                tube3a.style.boxShadow = '0 0 10px #ea580c';
+                tube3b.style.background = '#f97316';
+                tube3b.style.boxShadow = '0 0 10px #ea580c';
+                
+                showToast("진공관 가열중... (3초 소요)");
+                
+                initNoiseGenerator();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
                 }
-            }
-
-            let freqUnit = (activeBand === 'AM') ? 'kHz' : 'MHz';
-            if (proximity > 0.85 && closestStation) {
-                document.getElementById('playing-title').innerText = `${closestStation.title} (${activeFreq} ${freqUnit})`;
-            } else if (proximity > 0.1 && closestStation) {
-                document.getElementById('playing-title').innerText = `[지직...] 신호 미약... (${activeFreq} ${freqUnit})`;
+                
+                setTimeout(() => {
+                    if (radioPower) {
+                        showToast("라디오 전원 수립 성공.");
+                        processTuningAudio();
+                    }
+                }, 3000);
             } else {
-                document.getElementById('playing-title').innerText = `수신 대기중... (${activeFreq} ${freqUnit})`;
+                radioPower = false;
+                volLbl.innerText = "OFF";
+                powerIcon.className = "w-4 h-4 text-zinc-500";
+                
+                tube1.style.background = '#27272a';
+                tube1.style.boxShadow = 'none';
+                tube3a.style.background = '#27272a';
+                tube3a.style.boxShadow = 'none';
+                tube3b.style.background = '#27272a';
+                tube3b.style.boxShadow = 'none';
+                
+                if (staticGain) staticGain.gain.value = 0.0;
+                setMagicEye(0);
+                stopAllAudio();
+                
+                signalLight.className = "w-1.5 h-1.5 rounded-full bg-red-600";
+                signalText.innerText = "POWER OFF";
             }
         }
 
-        /* --- RECORD LOGBOOK INTERFACE CODE --- */
+        function setVolume(pct) {
+            if (pct <= 5) {
+                if (radioPower) togglePower();
+                knobVolIndicator.style.transform = `rotate(-135deg)`;
+                return;
+            }
+            if (!radioPower) {
+                togglePower();
+            }
+            masterVolume = (pct - 5) / 95;
+            volLbl.innerText = `${Math.round(masterVolume * 100)}%`;
+            const angle = -135 + (pct / 100) * 270;
+            knobVolIndicator.style.transform = `rotate(${angle}deg)`;
+            processTuningAudio();
+        }
 
-        function renderStations() {
-            const list = document.getElementById('station-list');
-            list.innerHTML = "";
+        function setMagicEye(signalStrength) {
+            const maxWedgeAngle = 45;
+            const minWedgeAngle = 3;
+            const targetAngle = maxWedgeAngle - (signalStrength * (maxWedgeAngle - minWedgeAngle));
+            magicEyeWedgeL.style.transform = `rotate(${targetAngle}deg)`;
+            magicEyeWedgeR.style.transform = `rotate(${-targetAngle}deg)`;
+        }
 
-            stations.sort((a,b) => {
-                if (a.band !== b.band) return a.band.localeCompare(b.band);
-                return a.freq - b.freq;
+        function stopAllAudio() {
+            audioStreamPlayer.pause();
+            audioStreamPlayer.src = "";
+            if (ytApiLoaded && youtubePlayer && youtubePlayer.pauseVideo) {
+                try { youtubePlayer.pauseVideo(); } catch(e){}
+            }
+            currentPlayingStationId = null;
+        }
+
+        // --- 오디오 믹싱 가동 핵심 로직 ---
+        function processTuningAudio() {
+            if (!radioPower || !audioCtx) return;
+
+            const range = bandRanges[currentBand];
+            let closestStation = null;
+            let minDistance = Infinity;
+
+            const activePresetStations = stations.filter(s => s.band === currentBand);
+            activePresetStations.forEach(st => {
+                const dist = Math.abs(currentFrequency - st.freq);
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    closestStation = st;
+                }
             });
 
+            const tolerance = range.tolerance;
+            
+            if (closestStation && minDistance < tolerance) {
+                let strength = 1.0 - (minDistance / tolerance);
+                strength = Math.sin(strength * Math.PI / 2);
+                
+                const stationVolume = masterVolume * strength;
+                const staticVolume = masterVolume * (1.0 - (strength * 0.95)) * 0.45;
+                
+                if (staticGain) {
+                    staticGain.gain.setValueAtTime(staticVolume, audioCtx.currentTime);
+                }
+
+                setMagicEye(strength);
+                
+                if (strength > 0.85) {
+                    signalLight.className = "w-1.5 h-1.5 rounded-full bg-green-500";
+                    signalText.innerText = "STEREO LOCK";
+                } else {
+                    signalLight.className = "w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse";
+                    signalText.innerText = `TUNING (${Math.round(strength * 100)}%)`;
+                }
+
+                if (currentPlayingStationId !== closestStation.id) {
+                    stopAllAudio();
+                    currentPlayingStationId = closestStation.id;
+                    
+                    const url = closestStation.url;
+                    const isYT = url.includes("youtube.com") || url.includes("youtu.be");
+
+                    if (isYT) {
+                        const videoId = extractYouTubeId(url);
+                        if (videoId && ytApiLoaded && youtubePlayer) {
+                            try {
+                                youtubePlayer.loadVideoById(videoId);
+                                youtubePlayer.setVolume(stationVolume * 100);
+                                youtubePlayer.playVideo();
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                    } else {
+                        try {
+                            audioStreamPlayer.src = url;
+                            audioStreamPlayer.volume = stationVolume;
+                            audioStreamPlayer.play().catch(()=>{});
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                } else {
+                    const isYT = closestStation.url.includes("youtube.com") || closestStation.url.includes("youtu.be");
+                    if (isYT) {
+                        if (ytApiLoaded && youtubePlayer && youtubePlayer.setVolume) {
+                            try { youtubePlayer.setVolume(stationVolume * 100); } catch(e){}
+                        }
+                    } else {
+                        audioStreamPlayer.volume = stationVolume;
+                    }
+                }
+
+            } else {
+                if (staticGain) {
+                    staticGain.gain.setValueAtTime(masterVolume * 0.45, audioCtx.currentTime);
+                }
+                setMagicEye(0.0);
+                signalLight.className = "w-1.5 h-1.5 rounded-full bg-red-600";
+                signalText.innerText = "STATIC NOISE";
+                stopAllAudio();
+            }
+        }
+
+        function extractYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function renderPresetMarkers() {
+            presetMarkersContainer.innerHTML = '';
+            const range = bandRanges[currentBand];
+            const activePresetStations = stations.filter(s => s.band === currentBand);
+            
+            activePresetStations.forEach(st => {
+                const percent = ((st.freq - range.min) / (range.max - range.min)) * 100;
+                if (percent >= 0 && percent <= 100) {
+                    const marker = document.createElement('div');
+                    marker.className = "absolute top-0 bottom-0 w-0.5 bg-amber-950/40 z-0";
+                    marker.style.left = `${percent}%`;
+                    
+                    const dot = document.createElement('div');
+                    dot.className = "absolute -top-1 -left-1 w-2 h-2 rounded-full bg-amber-800 border border-amber-950 shadow";
+                    marker.appendChild(dot);
+                    
+                    const text = document.createElement('div');
+                    text.className = "absolute top-1 -left-3 text-[7px] text-amber-950/70 font-mono scale-90";
+                    text.innerText = st.freq;
+                    marker.appendChild(text);
+
+                    presetMarkersContainer.appendChild(marker);
+                }
+            });
+        }
+
+        // --- 스토리지 연결 및 채널 드로우 ---
+        function loadPresetStations() {
+            const stored = localStorage.getItem('vac_radio_stations_v1');
+            if (stored) {
+                stations = JSON.parse(stored);
+            }
+            renderPresetList();
+            renderPresetMarkers();
+        }
+
+        function savePresetStations() {
+            localStorage.setItem('vac_radio_stations_v1', JSON.stringify(stations));
+            renderPresetList();
+            renderPresetMarkers();
+            processTuningAudio();
+        }
+
+        function renderPresetList() {
+            stationListContainer.innerHTML = '';
             stations.forEach(st => {
+                const isCurrent = (currentBand === st.band && Math.abs(currentFrequency - st.freq) < bandRanges[st.band].tolerance);
+                
                 const item = document.createElement('div');
-                item.className = "flex items-center justify-between border-b border-stone-200/60 pb-1.5 pt-1 text-xs";
+                item.className = `p-2.5 rounded border transition-colors flex items-center justify-between ${isCurrent ? 'bg-amber-900/40 border-amber-500' : 'bg-black/30 border-amber-950/40 hover:border-amber-900/50'}`;
                 
-                let unit = st.band === 'AM' ? 'kHz' : 'MHz';
-                
-                item.innerHTML = `
-                    <div class="flex flex-col w-3/4">
-                        <div class="flex items-center gap-1.5">
-                            <span class="bg-amber-800 text-amber-100 text-[9px] font-bold px-1 rounded retro-mono">${st.band}</span>
-                            <span class="font-bold text-stone-800 retro-mono hover:underline cursor-pointer" onclick="jumpToStation('${st.band}', ${st.freq})">${st.freq} ${unit}</span>
-                        </div>
-                        <span class="text-stone-600 truncate font-semibold">${st.title}</span>
+                const detailWrap = document.createElement('div');
+                detailWrap.className = "flex-1 mr-2 cursor-pointer";
+                detailWrap.innerHTML = `
+                    <div class="font-bold flex items-center gap-1.5 ${isCurrent ? 'text-amber-400' : 'text-amber-100'}">
+                        <span>${st.name}</span>
+                        ${isCurrent ? '<i data-lucide="radio-receiver" class="w-3.5 h-3.5 text-amber-400 animate-bounce"></i>' : ''}
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="deleteStation('${st.id}')" class="text-red-700 hover:text-red-950 hover:scale-110 duration-150 font-bold" title="지우기">❌</button>
+                    <div class="text-[10px] text-amber-600 font-mono mt-0.5">
+                        <span class="bg-amber-950 text-amber-500 px-1 py-0.2 rounded mr-1">${st.band}</span>
+                        <span>${st.freq} ${bandRanges[st.band].unit}</span>
                     </div>
                 `;
-                list.appendChild(item);
-            });
-        }
-
-        function jumpToStation(band, freq) {
-            setBand(band);
-            
-            let sliderVal = 0;
-            if (band === 'AM') {
-                sliderVal = freqToPercent(freq, AM_POINTS);
-            } else {
-                sliderVal = freqToPercent(freq, SW_POINTS);
-            }
-
-            tuningSliderValue = sliderVal;
-            document.getElementById('tuning-slider').value = sliderVal;
-            document.getElementById('knob-tuning').style.transform = `rotate(${(sliderVal - 50) * 5.6}deg)`;
-            
-            updateDialNeedle();
-            triggerAlert(`${band} ${freq} 채널로 눈금이 정밀 정렬되었습니다.`);
-            
-            // Immediately release audio contexts after jumping
-            setTimeout(() => {
-                if (ytReady && ytPlayer) {
-                    try {
-                        ytPlayer.unMute();
-                        ytPlayer.playVideo();
-                    } catch(e){}
-                }
-            }, 350);
-        }
-
-        function addOrUpdateStation() {
-            const band = document.getElementById('form-band').value;
-            const freqInput = parseFloat(document.getElementById('form-freq').value);
-            const titleInput = document.getElementById('form-title').value.trim();
-            const urlInput = document.getElementById('form-url').value.trim();
-
-            if (!freqInput || !titleInput || !urlInput) {
-                triggerAlert("모든 주파수 입력 요소를 채워 주십시오.");
-                return;
-            }
-
-            const videoId = extractVideoId(urlInput);
-            if (!videoId) {
-                triggerAlert("올바르지 않은 유튜브 링크 포맷입니다.");
-                return;
-            }
-
-            if (band === 'AM' && (freqInput < 530 || freqInput > 1600)) {
-                triggerAlert("AM 범위 경고 (530 ~ 1600 kHz)");
-                return;
-            }
-            if (band === 'SW' && (freqInput < 5.9 || freqInput > 18.0)) {
-                triggerAlert("SW 범위 경고 (5.9 ~ 18.0 MHz)");
-                return;
-            }
-
-            const existingIndex = stations.findIndex(st => st.band === band && st.freq === freqInput);
-            if (existingIndex > -1) {
-                stations[existingIndex] = {
-                    id: stations[existingIndex].id,
-                    band,
-                    freq: freqInput,
-                    title: titleInput,
-                    url: urlInput
-                };
-                triggerAlert(`${band} ${freqInput} 대역 정보가 갱신되었습니다.`);
-            } else {
-                stations.push({
-                    id: 'st-' + Date.now(),
-                    band,
-                    freq: freqInput,
-                    title: titleInput,
-                    url: urlInput
+                
+                detailWrap.addEventListener('click', () => {
+                    setFrequencyValue(st.freq, st.band);
+                    showToast(`[${st.name}] 수신 동조 완료`);
                 });
-                triggerAlert(`신규 주파수 ${band} ${freqInput} 가 등록되었습니다.`);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = "text-red-400 hover:text-red-300 p-1";
+                deleteBtn.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>`;
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showRetroConfirm(
+                        "주파수 삭제",
+                        `'${st.name}' 주파수를 프리셋 리스트에서 완전히 지우시겠습니까?`,
+                        () => {
+                            stations = stations.filter(s => s.id !== st.id);
+                            savePresetStations();
+                            showToast("채널이 완전히 삭제되었습니다.");
+                        }
+                    );
+                });
+
+                item.appendChild(detailWrap);
+                item.appendChild(deleteBtn);
+                stationListContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // --- 🔄 고급 터치/마우스 원형 각도 튜닝 제어 시스템 ---
+        function getAngle(clientX, clientY, element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const dx = clientX - centerX;
+            const dy = clientY - centerY;
+            return Math.atan2(dy, dx) * (180 / Math.PI);
+        }
+
+        function makeCircularKnob(element, callback) {
+            let active = false;
+            let lastAngle = 0;
+
+            function onStart(e) {
+                active = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                lastAngle = getAngle(clientX, clientY, element);
+                e.preventDefault();
             }
 
-            document.getElementById('form-freq').value = "";
-            document.getElementById('form-title').value = "";
-            document.getElementById('form-url').value = "";
+            function onMove(e) {
+                if (!active) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const currentAngle = getAngle(clientX, clientY, element);
+                
+                let diff = currentAngle - lastAngle;
+                
+                if (diff > 180) diff -= 360;
+                if (diff < -180) diff += 360;
 
-            saveStationsToLocalStorage();
-            renderStations();
-            updateSystemVolumeAndTuning();
+                callback(diff);
+                lastAngle = currentAngle;
+                e.preventDefault();
+            }
+
+            function onEnd() {
+                active = false;
+            }
+
+            element.addEventListener('mousedown', onStart);
+            element.addEventListener('touchstart', onStart, { passive: false });
+
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('touchmove', onMove, { passive: false });
+
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchend', onEnd);
         }
 
-        function deleteStation(id) {
-            stations = stations.filter(st => st.id !== id);
-            triggerAlert("대장에서 주파수 설정이 삭제되었습니다.");
-            saveStationsToLocalStorage();
-            renderStations();
-            updateSystemVolumeAndTuning();
+        // 1. 볼륨 원형 터치 연동
+        let volumePercentage = 50;
+        makeCircularKnob(knobVolume, (angleDifference) => {
+            volumePercentage += angleDifference * 0.35; 
+            volumePercentage = Math.max(0, Math.min(100, volumePercentage));
+            setVolume(volumePercentage);
+        });
+
+        knobVolume.addEventListener('click', (e) => {
+            if (e.target.closest('.w-8')) {
+                togglePower();
+            }
+        });
+
+        // 2. 주파수 튜닝 원형 터치 연동
+        makeCircularKnob(knobTuning, (angleDifference) => {
+            currentDialPos += angleDifference * 0.12; 
+            currentDialPos = Math.max(0, Math.min(100, currentDialPos));
+            
+            const rotation = (currentDialPos / 100) * 360;
+            knobTuneIndicator.style.transform = `rotate(${rotation}deg)`;
+            updateFrequencyByDial();
+        });
+
+        // 3. 다이얼 내부 바늘 가이드판 직접 터치/스와이프 이동 
+        let isDialDragging = false;
+
+        function handleDialGlassMove(clientX) {
+            const rect = dialGlassWindow.getBoundingClientRect();
+            const padding = rect.width * 0.09;
+            const usableWidth = rect.width - (padding * 2);
+            const relativeX = clientX - rect.left - padding;
+            
+            let percentage = (relativeX / usableWidth) * 100;
+            percentage = Math.max(0, Math.min(100, percentage));
+            
+            currentDialPos = percentage;
+            
+            const rotation = (currentDialPos / 100) * 360;
+            knobTuneIndicator.style.transform = `rotate(${rotation}deg)`;
+            
+            updateFrequencyByDial();
         }
+
+        dialGlassWindow.addEventListener('mousedown', (e) => {
+            isDialDragging = true;
+            handleDialGlassMove(e.clientX);
+        });
+
+        dialGlassWindow.addEventListener('touchstart', (e) => {
+            isDialDragging = true;
+            handleDialGlassMove(e.touches[0].clientX);
+            e.preventDefault();
+        }, { passive: false });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDialDragging) handleDialGlassMove(e.clientX);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (isDialDragging) {
+                handleDialGlassMove(e.touches[0].clientX);
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        window.addEventListener('mouseup', () => { isDialDragging = false; });
+        window.addEventListener('touchend', () => { isDialDragging = false; });
+
+        // --- 일반 버튼 리스너 바인딩 ---
+        btnTuneUp.addEventListener('click', () => {
+            const step = currentBand === 'AM' ? 2.0 : 0.04;
+            setFrequencyValue(currentFrequency + step, currentBand);
+        });
+
+        btnTuneDown.addEventListener('click', () => {
+            const step = currentBand === 'AM' ? 2.0 : 0.04;
+            setFrequencyValue(currentFrequency - step, currentBand);
+        });
+
+        knobBand.addEventListener('click', () => {
+            rotateBand();
+        });
+
+        // 신규 방송 등록
+        const btnAddStation = document.getElementById('btn-add-station');
+        btnAddStation.addEventListener('click', () => {
+            const nameInput = document.getElementById('station-name');
+            const bandSelect = document.getElementById('station-band');
+            const freqInput = document.getElementById('station-freq');
+            const urlInput = document.getElementById('station-url');
+
+            const name = nameInput.value.trim();
+            const band = bandSelect.value;
+            const freq = parseFloat(freqInput.value);
+            const url = urlInput.value.trim();
+
+            if (!name || isNaN(freq) || !url) {
+                showToast("모든 정보를 올바르게 입력해주세요!");
+                return;
+            }
+
+            const range = bandRanges[band];
+            if (freq < range.min || freq > range.max) {
+                showToast(`${band} 유효대역: ${range.min} ~ ${range.max}`);
+                return;
+            }
+
+            const newStation = {
+                id: Date.now().toString(),
+                name: name,
+                band: band,
+                freq: freq,
+                url: url
+            };
+
+            stations.push(newStation);
+            stations.sort((a, b) => a.freq - b.freq);
+            savePresetStations();
+            showToast(`등록 성공: ${name}`);
+
+            nameInput.value = '';
+            freqInput.value = '';
+            urlInput.value = '';
+        });
+
+        // 프리셋 복구 초기화
+        const btnResetStations = document.getElementById('btn-reset-stations');
+        btnResetStations.addEventListener('click', () => {
+            showRetroConfirm(
+                "데이터 복구 경고",
+                "모든 주파수 정보국 리스트를 지우고 최초 기본 프리셋 상태로 복구할까요?",
+                () => {
+                    stations = [...defaultStations];
+                    savePresetStations();
+                    showToast("기본 리스트로 복원되었습니다.");
+                }
+            );
+        });
+
+        // --- 💾 JSON 내보내기 (Export) 구현 ---
+        const btnExportJson = document.getElementById('btn-export-json');
+        btnExportJson.addEventListener('click', () => {
+            try {
+                const dataStr = JSON.stringify(stations, null, 4);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                
+                const exportFileDefaultName = 'vintage-radio-presets.json';
+                
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+                showToast("성공적으로 JSON 백업 파일이 다운로드되었습니다.");
+            } catch (e) {
+                showToast("백업 파일 생성 실패");
+            }
+        });
+
+        // --- 📂 JSON 가져오기 (Import) 구현 ---
+        const btnImportJson = document.getElementById('btn-import-json');
+        const fileImportJson = document.getElementById('file-import-json');
+
+        btnImportJson.addEventListener('click', () => {
+            fileImportJson.click();
+        });
+
+        fileImportJson.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const parsedData = JSON.parse(event.target.result);
+                    
+                    // 유효성 데이터 무결성 검증 (배열 검사)
+                    if (!Array.isArray(parsedData)) {
+                        throw new Error("JSON 루트 구조가 배열이 아닙니다.");
+                    }
+
+                    // 필수 속성 구조 검증
+                    const isValid = parsedData.every(item => {
+                        return item.name && item.band && typeof item.freq === 'number' && item.url;
+                    });
+
+                    if (!isValid) {
+                        throw new Error("일부 항목에 이름(name), 밴드(band), 주파수(freq), 스트림 URL(url)이 누락되었습니다.");
+                    }
+
+                    // 밴드 이름 적합성 검사
+                    const bandsCheck = parsedData.every(item => ['AM', 'SW1', 'SW2', 'SW3'].includes(item.band));
+                    if (!bandsCheck) {
+                        throw new Error("지원하지 않는 주파수 밴드 명칭이 발견되었습니다.");
+                    }
+
+                    // 커스텀 확인 모달 기동
+                    showRetroConfirm(
+                        "외부 주파수 목록 가져오기",
+                        `가져온 JSON 파일에 존재하는 총 ${parsedData.length}개의 전파 목록을 덮어씌워 보존하시겠습니까? (기존 리스트는 대체됩니다)`,
+                        () => {
+                            stations = parsedData;
+                            savePresetStations();
+                            showToast("라디오 전파 데이터 교체 완료!");
+                        }
+                    );
+                } catch (error) {
+                    showRetroConfirm(
+                        "데이터 연동 실패",
+                        `불러오기 실패: 올바른 구조의 라디오 설정 JSON 형식이 아닙니다.\n오류 정보: ${error.message}`,
+                        () => {} // 오류 경고용이므로 확인 후 닫히도록 바인딩
+                    );
+                }
+                fileImportJson.value = ''; // 다음 파일을 대비한 리셋
+            };
+            reader.readAsText(file);
+        });
+
+        // 초기 구동 실행
+        window.addEventListener('load', () => {
+            loadPresetStations();
+            setFrequencyValue(850, 'AM');
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
