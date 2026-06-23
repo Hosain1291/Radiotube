@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1940s 아날로그 진공관 라디오 (고해상도 튜너 디버그 에디션)</title>
+    <title>1940s 아날로그 진공관 라디오 (미니멀 다이얼 에디션)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for retro touch -->
@@ -116,7 +116,7 @@
                             <div class="flex-grow grille-fabric rounded-lg border border-stone-900"></div>
                         </div>
 
-                        <!-- Mid section: Retro Frequency Dial Window -->
+                        <!-- Mid section: Retro Frequency Dial Window (Clean layout without button) -->
                         <div class="w-full h-[150px] relative brass-bezel p-1.5 rounded-lg my-4">
                             <div class="w-full h-full rounded dial-glass relative overflow-hidden flex flex-col justify-between select-none">
                                 
@@ -141,16 +141,12 @@
                                         <span>1600</span>
                                     </div>
 
-                                    <!-- Status & Live Tuning Precision Indicator -->
-                                    <div class="w-full flex justify-center items-center gap-2">
-                                        <div class="bg-stone-900/10 border border-stone-900/5 rounded px-2 py-0.5 flex items-center gap-1.5">
+                                    <!-- Status & Live Tuning Precision Indicator (Clean Centered Layout) -->
+                                    <div class="w-full flex justify-center items-center">
+                                        <div class="bg-stone-900/10 border border-stone-900/5 rounded px-2.5 py-0.5 flex items-center gap-1.5">
                                             <div id="tune-lock-dot" class="w-1.5 h-1.5 rounded-full bg-stone-500/50"></div>
                                             <span id="tuning-precision-display" class="retro-mono text-[10px] text-stone-900 font-bold uppercase tracking-wider">UNTUNED</span>
                                         </div>
-                                        <!-- Forced Sound Release Secret Trigger for Browsers' Autoplay Policy -->
-                                        <button onclick="forceReleaseAudio()" class="bg-yellow-500 hover:bg-yellow-600 text-stone-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded shadow-sm border border-yellow-600 active:scale-95 transition-all animate-bounce" title="소리가 차단되었을 때 강제로 음소거를 해제합니다.">
-                                            🔊 소리 안날때 클릭!
-                                        </button>
                                     </div>
 
                                     <!-- SW Scale Numbers -->
@@ -698,12 +694,9 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // BROWSER SAFETY NET: Hard release of the silent mute flag on user's manual action
-        function forceReleaseAudio() {
-            if (!powerOn) {
-                triggerAlert("라디오 전원(Power)을 먼저 켜주십시오!");
-                return;
-            }
+        // BROWSER SAFETY NET: Hard release of the silent mute flag on user's manual action (implicitly triggered)
+        function forceReleaseAudioImplicit() {
+            if (!powerOn) return;
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -711,13 +704,7 @@
                 try {
                     ytPlayer.unMute();
                     ytPlayer.playVideo();
-                    triggerAlert("🔊 브라우저 보안 오디오 락을 수동 해제했습니다.");
-                    updateSystemVolumeAndTuning();
-                } catch(e) {
-                    triggerAlert("유튜브 음소거 해제 명령 실패: " + e.message);
-                }
-            } else {
-                triggerAlert("유튜브 모듈이 아직 초기화 중입니다.");
+                } catch(e) {}
             }
         }
 
@@ -752,10 +739,12 @@
                 document.removeEventListener('mouseup', endDrag);
                 document.removeEventListener('touchmove', drag);
                 document.removeEventListener('touchend', endDrag);
-                // Force an audio context state assertion
+                
+                // Force an audio context state assertion & unlock stream
                 if (audioCtx && audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
+                forceReleaseAudioImplicit();
             };
 
             el.addEventListener('mousedown', startDrag);
@@ -1057,7 +1046,6 @@
             let minDiff = Infinity;
             
             // Widened the signal acceptance band:
-            // AM: ~140kHz range, SW: ~1.6MHz range. This makes finding stations much more forgiving.
             let maxDistanceAllowed = (activeBand === 'AM') ? 140 : 1.6; 
             const snapThreshold = (activeBand === 'AM') ? 15 : 0.22; 
 
@@ -1141,7 +1129,6 @@
                 if (closestStation && proximity > 0.0) {
                     const videoId = extractVideoId(closestStation.url);
                     if (videoId) {
-                        // Load the video ONLY if user stays settled on/near the frequency (Debounced)
                         loadYouTubeVideoDebounced(videoId);
 
                         // Throttled volume sync
@@ -1149,7 +1136,6 @@
                         setYouTubeVolumeThrottled(finalYTVolume);
                     }
                 } else {
-                    // Out of range: Fade to zero immediately
                     setYouTubeVolumeThrottled(0);
                 }
             }
