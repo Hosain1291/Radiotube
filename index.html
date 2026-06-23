@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1940s 아날로그 진공관 라디오 (리얼 안테나 튜너 에디션)</title>
+    <title>아날로그 진공관 라디오</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for retro touch -->
@@ -43,8 +43,8 @@
             box-shadow: inset 0 2px 4px rgba(255,255,255,0.4), 0 4px 8px rgba(0,0,0,0.5);
         }
         .dial-glass {
-            background: radial-gradient(circle, rgba(253,244,215,0.9) 0%, rgba(220,200,160,0.95) 100%);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+            background: radial-gradient(circle, rgba(253,244,215,0.95) 0%, rgba(215,195,150,0.98) 100%);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
         }
         
         /* Grille fabric pattern */
@@ -109,57 +109,72 @@
                                         <div id="magic-eye-beam" class="w-1.5 h-10 bg-green-500 rounded-full blur-[1px] opacity-10 transform scale-y-50 duration-300"></div>
                                     </div>
                                 </div>
-                                <span class="retro-title text-xs text-amber-500/80 font-semibold tracking-wider uppercase text-center">EM-80</span>
+                                <span class="retro-title text-xs text-amber-500/80 font-semibold tracking-wider uppercase text-center font-bold">EM-80</span>
                             </div>
                             
                             <!-- Right Grill -->
                             <div class="flex-grow grille-fabric rounded-lg border border-stone-900"></div>
                         </div>
 
-                        <!-- Mid section: Retro Frequency Dial Window -->
+                        <!-- Mid section: Retro Frequency Dial Window (RE-CALIBRATED) -->
                         <div class="w-full h-[150px] relative brass-bezel p-1.5 rounded-lg my-4">
-                            <div class="w-full h-full rounded dial-glass relative overflow-hidden flex flex-col justify-between p-2 select-none">
+                            <div class="w-full h-full rounded dial-glass relative overflow-hidden flex flex-col justify-between select-none">
                                 
                                 <!-- Dial Light (Warm Bulb) -->
                                 <div id="dial-light" class="absolute inset-0 bg-amber-500/0 duration-[2.5s] mix-blend-color-burn pointer-events-none"></div>
                                 <div id="dial-light-ambient" class="absolute inset-0 bg-yellow-400/0 duration-[2.5s] mix-blend-screen opacity-40 dial-flicker pointer-events-none"></div>
 
-                                <!-- AM Scale (Top) -->
-                                <div class="w-full flex justify-between px-4 retro-mono text-amber-950/70 text-xs font-bold border-b border-stone-800/20 pb-1 mt-1 z-10">
-                                    <span class="text-[10px] text-stone-900">AM kHz</span>
-                                    <span>530</span>
-                                    <span>700</span>
-                                    <span>900</span>
-                                    <span>1100</span>
-                                    <span>1300</span>
-                                    <span>1600</span>
+                                <!-- Calibrated Frequency Grid Scale Container -->
+                                <div class="relative w-full h-full flex flex-col justify-between py-3 px-12 z-10">
+                                    
+                                    <!-- Isolated Unit Labels (Now out of the main flexbox to avoid shifting numbers) -->
+                                    <div class="absolute left-2.5 top-3.5 retro-mono text-[9px] text-stone-900 font-extrabold leading-none">AM<br><span class="text-[7px] text-stone-800/80">kHz</span></div>
+                                    <div class="absolute left-2.5 bottom-3.5 retro-mono text-[9px] text-stone-900 font-extrabold leading-none">SW<br><span class="text-[7px] text-stone-800/80">MHz</span></div>
+
+                                    <!-- AM Scale Numbers (Aaligned perfectly to 0%, 20%, 40%, 60%, 80%, 100%) -->
+                                    <div class="w-full flex justify-between retro-mono text-amber-950/80 text-xs font-bold border-b border-stone-950/20 pb-1 mt-0.5">
+                                        <span>530</span>
+                                        <span>700</span>
+                                        <span>900</span>
+                                        <span>1100</span>
+                                        <span>1300</span>
+                                        <span>1600</span>
+                                    </div>
+
+                                    <!-- Status & Live Tuning Precision Indicator -->
+                                    <div class="w-full flex justify-center">
+                                        <div class="bg-stone-900/10 border border-stone-900/5 rounded px-2 py-0.5 flex items-center gap-1.5">
+                                            <div id="tune-lock-dot" class="w-1.5 h-1.5 rounded-full bg-stone-500/50"></div>
+                                            <span id="tuning-precision-display" class="retro-mono text-[10px] text-stone-900 font-bold uppercase tracking-wider">UNTUNED</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- SW Scale Numbers (Aligned perfectly to 0%, 20%, 40%, 60%, 80%, 100%) -->
+                                    <div class="w-full flex justify-between retro-mono text-amber-900/90 text-xs font-bold border-t border-stone-950/20 pt-1 mb-0.5">
+                                        <span>5.9</span>
+                                        <span>8.0</span>
+                                        <span>10.0</span>
+                                        <span>12.0</span>
+                                        <span>15.0</span>
+                                        <span>18.0</span>
+                                    </div>
                                 </div>
 
-                                <!-- SW Scale (Bottom) -->
-                                <div class="w-full flex justify-between px-4 retro-mono text-amber-900/80 text-xs font-bold border-t border-stone-800/20 pt-1 mb-1 z-10">
-                                    <span class="text-[10px] text-stone-900">SW MHz</span>
-                                    <span>5.9</span>
-                                    <span>8.0</span>
-                                    <span>10.0</span>
-                                    <span>12.0</span>
-                                    <span>15.0</span>
-                                    <span>18.0</span>
-                                </div>
-
-                                <!-- Dial Needle Line Overlay -->
-                                <div class="absolute inset-x-8 bottom-4 top-4 pointer-events-none">
+                                <!-- Dial Needle Line Overlay (Fits scale padding precisely) -->
+                                <div class="absolute inset-x-12 bottom-4 top-4 pointer-events-none z-20">
                                     <!-- Invisible Range Input for Direct Dragging -->
-                                    <input type="range" id="tuning-slider" min="0" max="100" step="0.05" value="30" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20 pointer-events-auto">
+                                    <input type="range" id="tuning-slider" min="0" max="100" step="0.01" value="30" class="absolute inset-y-0 -left-2 -right-2 w-[calc(100%+16px)] h-full opacity-0 cursor-ew-resize z-30 pointer-events-auto">
                                     
                                     <!-- Visible Tuning Needle -->
-                                    <div id="tuning-needle" class="absolute top-0 bottom-0 w-0.5 bg-red-700/85 transition-all duration-75 shadow-[0_0_4px_rgba(185,28,28,0.5)] z-10" style="left: 30%;">
-                                        <div class="absolute top-0 -left-1 w-2.5 h-1.5 bg-red-800 rounded-sm"></div>
-                                        <div class="absolute bottom-0 -left-1 w-2.5 h-1.5 bg-red-800 rounded-sm"></div>
+                                    <div id="tuning-needle" class="absolute top-0 bottom-0 w-0.5 bg-red-700/85 transition-all duration-75 shadow-[0_0_4px_rgba(185,28,28,0.5)] z-20" style="left: 30%;">
+                                        <!-- Antique Pointer Hardware -->
+                                        <div class="absolute top-0 -left-[5px] w-3 h-1.5 bg-red-800 rounded-sm"></div>
+                                        <div class="absolute bottom-0 -left-[5px] w-3 h-1.5 bg-red-800 rounded-sm"></div>
                                     </div>
                                 </div>
 
                                 <!-- Glass Reflections -->
-                                <div class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/0 via-white/10 to-white/0"></div>
+                                <div class="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/0 via-white/10 to-white/0 z-20"></div>
                             </div>
                         </div>
 
@@ -252,11 +267,8 @@
                             <!-- Tube 1 (Power Amplifier El84) -->
                             <div class="flex flex-col items-center w-16 relative">
                                 <div class="w-12 h-24 relative flex items-end justify-center">
-                                    <!-- Tube Socket -->
                                     <div class="absolute bottom-0 w-8 h-3 bg-stone-800 rounded border border-stone-700 z-10"></div>
-                                    <!-- Filament Glow -->
                                     <div class="tube-filament absolute bottom-2 w-4 h-12 bg-orange-600/0 rounded-full blur-[4px] mix-blend-screen transition-all duration-[3s]"></div>
-                                    <!-- Glass Envelope -->
                                     <div class="absolute bottom-1 w-10 h-20 rounded-t-full border border-stone-600/30 bg-gradient-to-t from-stone-900/50 via-white/5 to-stone-500/10 shadow-lg"></div>
                                 </div>
                                 <span class="retro-mono text-[9px] text-stone-500 mt-1">EL84</span>
@@ -336,7 +348,7 @@
                     </h2>
                     
                     <p class="retro-mono text-xs text-stone-600 italic my-3 leading-relaxed">
-                        * 주파수에 할당된 유튜브 방송 링크 목록입니다. 주파수 수치가 주파수 다이얼 패널 수치와 매칭될수록 지지직거리는 노이즈가 사라지며 실제 유튜브 오디오가 크고 또렷하게 융합됩니다!
+                        * 주파수에 할당된 유튜브 방송 링크 목록입니다. 주파수 수치가 다이얼 패널 수치와 매치될 때 노이즈가 완화되며 오디오가 융합됩니다!
                     </p>
 
                     <!-- Station List -->
@@ -411,9 +423,60 @@
         let stations = [
             { id: 'st-1', band: 'AM', freq: 740, title: 'Glenn Miller & Big Band Radio', url: 'https://www.youtube.com/watch?v=6v7L8m0a0H8' },
             { id: 'st-2', band: 'AM', freq: 1100, title: '1940s Classic Radio Drama - "Suspense"', url: 'https://www.youtube.com/watch?v=F3_6b8Y7V8w' },
-            { id: 'st-3', band: 'SW', freq: 6.1, title: 'Vintage World War II Propaganda & Broadcasts', url: 'https://www.youtube.com/watch?v=Gk6WCH_B7V8' },
-            { id: 'st-4', band: 'SW', freq: 9.5, title: 'Deep Space Signals & Retro Synth Ambient', url: 'https://www.youtube.com/watch?v=f2n_y84HqNY' }
+            { id: 'st-3', band: 'SW', freq: 8.0, title: 'Vintage World War II Propaganda & Broadcasts', url: 'https://www.youtube.com/watch?v=Gk6WCH_B7V8' },
+            { id: 'st-4', band: 'SW', freq: 12.0, title: 'Deep Space Signals & Retro Synth Ambient', url: 'https://www.youtube.com/watch?v=f2n_y84HqNY' }
         ];
+
+        /* --- NON-LINEAR PIECEWISE SCALE CONFIGURATIONS --- */
+        // Mapping Slider Percentage (0% to 100%) to Specific Printed Dial Labels
+        const AM_POINTS = [
+            { p: 0, f: 530 },
+            { p: 20, f: 700 },
+            { p: 40, f: 900 },
+            { p: 60, f: 1100 },
+            { p: 80, f: 1300 },
+            { p: 100, f: 1600 }
+        ];
+
+        const SW_POINTS = [
+            { p: 0, f: 5.9 },
+            { p: 20, f: 8.0 },
+            { p: 40, f: 10.0 },
+            { p: 60, f: 12.0 },
+            { p: 80, f: 15.0 },
+            { p: 100, f: 18.0 }
+        ];
+
+        // Piecewise Interpolation Functions
+        function percentToFreq(p, points) {
+            if (p <= points[0].p) return points[0].f;
+            if (p >= points[points.length - 1].p) return points[points.length - 1].f;
+            
+            for (let i = 0; i < points.length - 1; i++) {
+                const pt1 = points[i];
+                const pt2 = points[i+1];
+                if (p >= pt1.p && p <= pt2.p) {
+                    const ratio = (p - pt1.p) / (pt2.p - pt1.p);
+                    return pt1.f + ratio * (pt2.f - pt1.f);
+                }
+            }
+            return points[0].f;
+        }
+
+        function freqToPercent(f, points) {
+            if (f <= points[0].f) return points[0].p;
+            if (f >= points[points.length - 1].f) return points[points.length - 1].p;
+            
+            for (let i = 0; i < points.length - 1; i++) {
+                const pt1 = points[i];
+                const pt2 = points[i+1];
+                if (f >= pt1.f && f <= pt2.f) {
+                    const ratio = (f - pt1.f) / (pt2.f - pt1.f);
+                    return pt1.p + ratio * (pt2.p - pt1.p);
+                }
+            }
+            return points[0].p;
+        }
 
         /* --- WEB AUDIO API (ANALOG SYNTHESIS) --- */
         let audioCtx = null;
@@ -431,10 +494,6 @@
         let knobVolumeValue = 75; // 0 to 100
         let tuningSliderValue = 18; // 0 to 100 representing position on dial scale
 
-        // Band Boundaries
-        const AM_MIN = 530, AM_MAX = 1600;
-        const SW_MIN = 5.9, SW_MAX = 18.0;
-
         // Custom toast alerter
         function triggerAlert(message) {
             const alertEl = document.getElementById('retro-alert');
@@ -445,7 +504,7 @@
             setTimeout(() => {
                 alertEl.classList.remove('opacity-100');
                 alertEl.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000);
+            }, 2500);
         }
 
         /* --- PREPARATION ON WINDOW LOAD --- */
@@ -461,7 +520,7 @@
             });
 
             setupKnobDrag('knob-tuning-container', (deltaY) => {
-                tuningSliderValue = Math.min(100, Math.max(0, tuningSliderValue - deltaY * 0.25));
+                tuningSliderValue = Math.min(100, Math.max(0, tuningSliderValue - deltaY * 0.22));
                 document.getElementById('knob-tuning').style.transform = `rotate(${(tuningSliderValue - 50) * 5.6}deg)`;
                 document.getElementById('tuning-slider').value = tuningSliderValue;
                 updateDialNeedle();
@@ -507,13 +566,11 @@
 
         function onPlayerReady(event) {
             ytReady = true;
-            ytPlayer.mute(); // Autoplay regulations bypass strategy
+            ytPlayer.mute(); 
         }
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.PLAYING) {
-                const data = ytPlayer.getVideoData();
-                // If we are currently tuned correctly, display title
                 updateSystemVolumeAndTuning();
             }
         }
@@ -533,7 +590,7 @@
             const startDrag = (e) => {
                 isDragging = true;
                 startY = e.touches ? e.touches[0].clientY : e.clientY;
-                if (!audioCtx) initAudio(); // Start audio system upon first meaningful interaction
+                if (!audioCtx) initAudio(); 
                 document.addEventListener('mousemove', drag);
                 document.addEventListener('mouseup', endDrag);
                 document.addEventListener('touchmove', drag, { passive: false });
@@ -762,15 +819,18 @@
             updateDialNeedle();
         }
 
-        // Translate sliding position to correct frequency numbers
+        // Translate sliding position to correct frequency numbers via Interpolation
         function updateDialNeedle() {
             const needle = document.getElementById('tuning-needle');
             needle.style.left = `${tuningSliderValue}%`;
 
+            // Calculate precise interpolated frequency
             if (activeBand === 'AM') {
-                currentFreq = Math.round(AM_MIN + (tuningSliderValue / 100) * (AM_MAX - AM_MIN));
+                const rawFreq = percentToFreq(tuningSliderValue, AM_POINTS);
+                currentFreq = Math.round(rawFreq); // Round to closest whole integer for AM
             } else {
-                currentFreq = parseFloat((SW_MIN + (tuningSliderValue / 100) * (SW_MAX - SW_MIN)).toFixed(2));
+                const rawFreq = percentToFreq(tuningSliderValue, SW_POINTS);
+                currentFreq = parseFloat(rawFreq.toFixed(2)); // Maintain two decimals for SW
             }
 
             updateSystemVolumeAndTuning();
@@ -780,12 +840,10 @@
         function updateVolumeControls() {
             if (!powerOn || !audioCtx) return;
             masterGain.gain.setTargetAtTime((knobVolumeValue / 100) * 0.75, audioCtx.currentTime, 0.1);
-            
-            // Re-trigger tuning to update relative YouTube volume to the new master cap
             updateSystemVolumeAndTuning();
         }
 
-        /* --- REAL-TIME TUNING & GRADUAL VOLUME FADE IN/OUT (The "Magic" Core) --- */
+        /* --- REAL-TIME TUNING, SNAP & GRADUAL VOLUME FADE IN/OUT --- */
         function updateSystemVolumeAndTuning() {
             if (!powerOn || !audioCtx) return;
 
@@ -793,8 +851,8 @@
             let minDiff = Infinity;
             
             // Detection radii: How far from the target frequency do we begin to hear a signal?
-            // AM: ~100kHz range from target, SW: ~1.2MHz range from target.
             let maxDistanceAllowed = (activeBand === 'AM') ? 100 : 1.2; 
+            const snapThreshold = (activeBand === 'AM') ? 12 : 0.15; // Range within which the dial snaps magnetically
 
             // Find the closest station on the currently active band
             stations.forEach(station => {
@@ -807,39 +865,62 @@
                 }
             });
 
-            // Signal Tuning Proximity Math:
-            // proximity = 1.0 (perfectly centered on target) to 0.0 (completely out of signal range)
+            // 🧲 TACTILE SNAP ASSIST: If we're incredibly close to the station's center frequency,
+            // we gently snap to the exact target frequency to provide crystal clear signal!
+            let activeFreq = currentFreq;
+            if (closestStation && minDiff < snapThreshold) {
+                activeFreq = closestStation.freq;
+                minDiff = 0; // Perfectly centered
+            }
+
+            // Signal Tuning Proximity Math (recalculated after snap check):
             let proximity = 0;
             if (closestStation && minDiff < maxDistanceAllowed) {
                 proximity = 1.0 - (minDiff / maxDistanceAllowed);
             }
 
-            // Exponential mapping for organic fading physics:
-            // 1. Station (YouTube) sound rises on a cubic curve (feels more like real radio waves)
+            // Exponential mapping for smooth, retro physics:
             let stationVolumeMultiplier = Math.pow(proximity, 3); 
-            // 2. White noise static falls back as signal gets clearer (does not drop to pure 0; old radios always have a 3% floor static)
-            let staticNoiseLevel = Math.max(0.03, 1.0 - Math.pow(proximity, 1.5));
-            // 3. Power hum (60Hz) is slightly louder in dead zones
+            let staticNoiseLevel = Math.max(0.04, 1.0 - Math.pow(proximity, 1.6));
             let humLevel = 0.12 + (1.0 - proximity) * 0.18;
 
             // Apply synthesizer gains via Web Audio API
-            gainStatic.gain.setTargetAtTime(staticNoiseLevel * 0.5, audioCtx.currentTime, 0.08);
+            gainStatic.gain.setTargetAtTime(staticNoiseLevel * 0.52, audioCtx.currentTime, 0.08);
             gainHum.gain.setTargetAtTime(humLevel * 0.35, audioCtx.currentTime, 0.1);
 
             // EM80 Magic eye reacts beautifully to reception strength
+            const magicEye = document.getElementById('magic-eye');
             const magicEyeBeam = document.getElementById('magic-eye-beam');
             if (magicEyeBeam) {
                 let beamScale = 0.12 + (proximity * 0.88);
-                // Slight shivering wobble when reception is weak/noisy (proximity between 0.1 and 0.8)
-                let wobble = (proximity > 0.1 && proximity < 0.8) ? (Math.random() * 0.08 - 0.04) : 0;
+                let wobble = (proximity > 0.1 && proximity < 0.85) ? (Math.random() * 0.09 - 0.045) : 0;
                 magicEyeBeam.style.transform = `scaleY(${Math.max(0.12, beamScale + wobble)})`;
                 magicEyeBeam.style.filter = `blur(${1.6 - proximity * 1.5}px) drop-shadow(0 0 ${beamScale * 12}px #22c55e)`;
             }
 
+            // Dial Lock Visual LED Dot Indicator on the scale
+            const tuneLockDot = document.getElementById('tune-lock-dot');
+            const tunePrecisionDisp = document.getElementById('tuning-precision-display');
+            if (tuneLockDot && tunePrecisionDisp) {
+                if (proximity > 0.9) {
+                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]";
+                    tunePrecisionDisp.innerText = "TUNED";
+                    tunePrecisionDisp.className = "retro-mono text-[10px] text-green-700 font-extrabold uppercase tracking-wider";
+                } else if (proximity > 0.3) {
+                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_6px_#f59e0b] animate-ping";
+                    tunePrecisionDisp.innerText = "WEAK SIGNAL";
+                    tunePrecisionDisp.className = "retro-mono text-[10px] text-amber-700 font-bold uppercase tracking-wider";
+                } else {
+                    tuneLockDot.className = "w-1.5 h-1.5 rounded-full bg-stone-500/40";
+                    tunePrecisionDisp.innerText = "NO SIGNAL";
+                    tunePrecisionDisp.className = "retro-mono text-[10px] text-stone-500 font-bold uppercase tracking-wider";
+                }
+            }
+
             // Dial needle vibratory shaking effect when struggling for signal
             const needle = document.getElementById('tuning-needle');
-            if (needle && proximity > 0.1 && proximity < 0.7) {
-                let jitter = (Math.random() * 0.15 - 0.075);
+            if (needle && proximity > 0.1 && proximity < 0.75) {
+                let jitter = (Math.random() * 0.16 - 0.08);
                 needle.style.transform = `translateX(${jitter}px)`;
             } else if (needle) {
                 needle.style.transform = 'translateX(0px)';
@@ -847,24 +928,21 @@
 
             // Heterodyne whistle (SW exclusively)
             if (activeBand === 'SW' && proximity > 0.05 && proximity < 0.95) {
-                // Pitch varies based on distance from core channel
-                let frequencyDev = minDiff / maxDistanceAllowed; // 0 to 1
+                let frequencyDev = minDiff / maxDistanceAllowed; 
                 let whistlePitch = 150 + (frequencyDev * 1800); 
                 whistleOscillator.frequency.setTargetAtTime(whistlePitch, audioCtx.currentTime, 0.04);
 
-                // Whistle peaks at around 50% deviation and completely silences when perfectly centered
                 let whistleVol = Math.sin(proximity * Math.PI) * (1.0 - proximity) * 0.18;
                 gainWhistle.gain.setTargetAtTime(whistleVol, audioCtx.currentTime, 0.08);
             } else {
                 gainWhistle.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
             }
 
-            // Handle YouTube Dynamic Fading and Permanent Background Playback
+            // Handle YouTube Dynamic Fading and Background Playback
             if (ytReady && ytPlayer) {
                 if (closestStation && proximity > 0.0) {
                     const videoId = extractVideoId(closestStation.url);
                     if (videoId) {
-                        // If we are close to a station and it's NOT the one currently loaded, load it!
                         if (currentPlayingVideoId !== videoId) {
                             currentPlayingVideoId = videoId;
                             ytPlayer.loadVideoById({
@@ -875,34 +953,28 @@
                             ytPlayer.unMute();
                         }
                         
-                        // Force play if it is paused (ensure continuous streaming)
                         if (ytPlayer.getPlayerState() !== YT.PlayerState.PLAYING) {
                             ytPlayer.playVideo();
                             ytPlayer.unMute();
                         }
 
-                        // SMOOTH REAL-TIME VOLUME MAPPING
-                        // Map 0.0~1.0 volume multiplier to YouTube's 0~100 scale, clamped by Master Volume knob
+                        // Map exponential volume to the YouTube player
                         let finalYTVolume = Math.round(stationVolumeMultiplier * knobVolumeValue);
                         ytPlayer.setVolume(finalYTVolume);
                     }
                 } else {
-                    // Completely out of any station's reach:
-                    // Instead of halting the stream instantly (which breaks the "always broadcasting" illusion),
-                    // we smoothly fade YouTube volume to 0. It continues streaming silently so that if the user
-                    // tunes back shortly, the content has advanced in time, exactly like a true analog broadcast!
                     ytPlayer.setVolume(0);
                 }
             }
 
-            // Display Info on Screen
+            // Display Info on Front Panel Screen
             let freqUnit = (activeBand === 'AM') ? 'kHz' : 'MHz';
-            if (proximity > 0.6 && closestStation) {
-                document.getElementById('playing-title').innerText = `${closestStation.title} (${currentFreq} ${freqUnit})`;
-            } else if (proximity > 0.05 && closestStation) {
-                document.getElementById('playing-title').innerText = `[신호 미약] 지직... ${closestStation.title.substring(0, 8)}...`;
+            if (proximity > 0.85 && closestStation) {
+                document.getElementById('playing-title').innerText = `${closestStation.title} (${activeFreq} ${freqUnit})`;
+            } else if (proximity > 0.1 && closestStation) {
+                document.getElementById('playing-title').innerText = `[지직...] 신호 미약... (${activeFreq} ${freqUnit})`;
             } else {
-                document.getElementById('playing-title').innerText = `수신 대기중... (${currentFreq} ${freqUnit})`;
+                document.getElementById('playing-title').innerText = `수신 대기중... (${activeFreq} ${freqUnit})`;
             }
         }
 
@@ -939,14 +1011,16 @@
             });
         }
 
+        // Snap precisely to the frequency with proper calculations
         function jumpToStation(band, freq) {
             setBand(band);
             
+            // Calculate EXACT slider percentage using piecewise interpolation
             let sliderVal = 0;
             if (band === 'AM') {
-                sliderVal = ((freq - AM_MIN) / (AM_MAX - AM_MIN)) * 100;
+                sliderVal = freqToPercent(freq, AM_POINTS);
             } else {
-                sliderVal = ((freq - SW_MIN) / (SW_MAX - SW_MIN)) * 100;
+                sliderVal = freqToPercent(freq, SW_POINTS);
             }
 
             tuningSliderValue = sliderVal;
@@ -954,7 +1028,7 @@
             document.getElementById('knob-tuning').style.transform = `rotate(${(sliderVal - 50) * 5.6}deg)`;
             
             updateDialNeedle();
-            triggerAlert(`${band} ${freq} 채널로 동조 바늘을 맞췄습니다.`);
+            triggerAlert(`${band} ${freq} 채널로 눈금이 정밀 정렬되었습니다.`);
         }
 
         function addOrUpdateStation() {
@@ -974,12 +1048,13 @@
                 return;
             }
 
-            if (band === 'AM' && (freqInput < AM_MIN || freqInput > AM_MAX)) {
-                triggerAlert(`AM 범위 경고 (${AM_MIN} ~ ${AM_MAX} kHz)`);
+            // Boundary validation based on our calibrated scale
+            if (band === 'AM' && (freqInput < 530 || freqInput > 1600)) {
+                triggerAlert("AM 범위 경고 (530 ~ 1600 kHz)");
                 return;
             }
-            if (band === 'SW' && (freqInput < SW_MIN || freqInput > SW_MAX)) {
-                triggerAlert(`SW 범위 경고 (${SW_MIN} ~ ${SW_MAX} MHz)`);
+            if (band === 'SW' && (freqInput < 5.9 || freqInput > 18.0)) {
+                triggerAlert("SW 범위 경고 (5.9 ~ 18.0 MHz)");
                 return;
             }
 
