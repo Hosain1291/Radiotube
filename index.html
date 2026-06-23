@@ -151,56 +151,59 @@
             <div class="my-5 relative">
                 <div id="dial-glass-window" class="dial-glass rounded-xl p-4 relative border-4 border-amber-950 shadow-2xl h-36 flex flex-col justify-between cursor-ew-resize">
                     
-                    <!-- 주파수 스케일 눈금 -->
+                    <!-- 주파수 스케일 눈금 (정렬 그리드 적용) -->
                     <div class="w-full flex flex-col justify-around h-full font-mono text-[10px] md:text-xs text-amber-950 font-bold pointer-events-none">
                         
                         <!-- SW3 (15.00 - 21.95 MHz) -->
-                        <div id="scale-sw3" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
-                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW3</span>
-                            <div class="flex justify-between flex-1 px-4 relative">
+                        <div id="scale-sw3" class="grid grid-cols-[48px_1fr_40px] items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="text-left font-serif font-bold text-[9px]">SW3</span>
+                            <div class="flex justify-between relative">
                                 <span>15.00</span><span>16.50</span><span>18.00</span><span>19.50</span><span>21.00</span><span>21.95</span>
                                 <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
                             </div>
-                            <span class="w-8 text-right">MHz</span>
+                            <span class="text-right">MHz</span>
                         </div>
 
                         <!-- SW2 (7.50 - 15.00 MHz) -->
-                        <div id="scale-sw2" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
-                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW2</span>
-                            <div class="flex justify-between flex-1 px-4 relative">
+                        <div id="scale-sw2" class="grid grid-cols-[48px_1fr_40px] items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="text-left font-serif font-bold text-[9px]">SW2</span>
+                            <div class="flex justify-between relative">
                                 <span>7.50</span><span>9.00</span><span>10.50</span><span>12.00</span><span>13.50</span><span>15.00</span>
                                 <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
                             </div>
-                            <span class="w-8 text-right">MHz</span>
+                            <span class="text-right">MHz</span>
                         </div>
 
                         <!-- SW1 (3.30 - 7.50 MHz) -->
-                        <div id="scale-sw1" class="flex justify-between items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
-                            <span class="w-10 text-left font-serif font-bold text-[9px]">SW1</span>
-                            <div class="flex justify-between flex-1 px-4 relative">
+                        <div id="scale-sw1" class="grid grid-cols-[48px_1fr_40px] items-center relative border-b border-amber-950/20 py-0.5 opacity-40 transition-opacity duration-300">
+                            <span class="text-left font-serif font-bold text-[9px]">SW1</span>
+                            <div class="flex justify-between relative">
                                 <span>3.30</span><span>4.10</span><span>4.90</span><span>5.70</span><span>6.50</span><span>7.50</span>
                                 <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
                             </div>
-                            <span class="w-8 text-right">MHz</span>
+                            <span class="text-right">MHz</span>
                         </div>
 
                         <!-- AM (530 - 1600 kHz) -->
-                        <div id="scale-am" class="flex justify-between items-center relative py-0.5 opacity-100 transition-opacity duration-300">
-                            <span class="w-10 text-left font-serif font-bold text-[9px]">AM</span>
-                            <div class="flex justify-between flex-1 px-4 relative">
+                        <div id="scale-am" class="grid grid-cols-[48px_1fr_40px] items-center relative py-0.5 opacity-100 transition-opacity duration-300">
+                            <span class="text-left font-serif font-bold text-[9px]">AM</span>
+                            <div class="flex justify-between relative">
                                 <span>530</span><span>700</span><span>900</span><span>1100</span><span>1300</span><span>1600</span>
                                 <div class="absolute inset-x-0 top-3 border-t border-dashed border-amber-950/30"></div>
                             </div>
-                            <span class="w-8 text-right">kHz</span>
+                            <span class="text-right">kHz</span>
                         </div>
                     </div>
 
-                    <!-- 주파수 프리셋 등록 위치 표시 마커 컨테이너 -->
-                    <div id="preset-markers" class="absolute left-[44px] right-[44px] top-0 bottom-0 pointer-events-none"></div>
+                    <!-- 주파수 프리셋 마커 및 바늘 트랙 정적 오버레이 (Grid Column 2와 100% 동일 면적) -->
+                    <div id="needle-track-container" class="absolute top-4 bottom-4 left-[64px] right-[56px] pointer-events-none">
+                        <!-- 주파수 프리셋 등록 위치 표시 마커 컨테이너 -->
+                        <div id="preset-markers" class="absolute inset-0 pointer-events-none"></div>
 
-                    <!-- 주파수 바늘 (Tuning Needle) -->
-                    <div id="tuning-needle" class="absolute top-0 bottom-0 w-1 bg-red-700 shadow-[0_0_8px_rgba(185,28,28,0.8)] left-[50%] transition-all duration-75 pointer-events-none z-10">
-                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-800 rounded-full"></div>
+                        <!-- 주파수 바늘 (Tuning Needle) -->
+                        <div id="tuning-needle" class="absolute top-0 bottom-0 w-1 bg-red-700 shadow-[0_0_8px_rgba(185,28,28,0.8)] left-0 transition-all duration-75 pointer-events-none z-10">
+                            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-800 rounded-full"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -421,6 +424,48 @@
 
         let stations = [...defaultStations];
 
+        // --- 📊 정밀 튜닝 구간 보간용 주파수 및 위치 정보 매핑 함수 ---
+        // 다이얼 0% ~ 100% 위치를 아날로그 눈금 라벨에 완벽하게 도킹하기 위한 피스 와이즈 매핑
+        function dialPosToFrequency(pos, band) {
+            const stops = [0, 20, 40, 60, 80, 100];
+            let freqs = [];
+            if (band === 'AM') freqs = [530, 700, 900, 1100, 1300, 1600];
+            else if (band === 'SW1') freqs = [3.30, 4.10, 4.90, 5.70, 6.50, 7.50];
+            else if (band === 'SW2') freqs = [7.50, 9.00, 10.50, 12.00, 13.50, 15.00];
+            else if (band === 'SW3') freqs = [15.00, 16.50, 18.00, 19.50, 21.00, 21.95];
+
+            if (pos <= 0) return freqs[0];
+            if (pos >= 100) return freqs[5];
+
+            for (let i = 0; i < stops.length - 1; i++) {
+                if (pos >= stops[i] && pos <= stops[i+1]) {
+                    const t = (pos - stops[i]) / (stops[i+1] - stops[i]);
+                    return freqs[i] + t * (freqs[i+1] - freqs[i]);
+                }
+            }
+            return freqs[0];
+        }
+
+        function frequencyToDialPos(freq, band) {
+            const stops = [0, 20, 40, 60, 80, 100];
+            let freqs = [];
+            if (band === 'AM') freqs = [530, 700, 900, 1100, 1300, 1600];
+            else if (band === 'SW1') freqs = [3.30, 4.10, 4.90, 5.70, 6.50, 7.50];
+            else if (band === 'SW2') freqs = [7.50, 9.00, 10.50, 12.00, 13.50, 15.00];
+            else if (band === 'SW3') freqs = [15.00, 16.50, 18.00, 19.50, 21.00, 21.95];
+
+            if (freq <= freqs[0]) return 0;
+            if (freq >= freqs[5]) return 100;
+
+            for (let i = 0; i < freqs.length - 1; i++) {
+                if (freq >= freqs[i] && freq <= freqs[i+1]) {
+                    const t = (freq - freqs[i]) / (freqs[i+1] - freqs[i]);
+                    return stops[i] + t * (stops[i+1] - stops[i]);
+                }
+            }
+            return 0;
+        }
+
         // --- 오디오 세션 제어용 노드 ---
         let audioCtx = null;
         let staticNode = null;
@@ -566,8 +611,8 @@
 
         // --- 주파수 동기화 및 바늘 이동 ---
         function updateFrequencyByDial() {
-            const range = bandRanges[currentBand];
-            currentFrequency = range.min + (currentDialPos / 100) * (range.max - range.min);
+            // 정밀 보간 함수를 통해 물리적 이동 백분율을 주파수로 1:1 디코딩
+            currentFrequency = dialPosToFrequency(currentDialPos, currentBand);
             
             if (currentBand === 'AM') {
                 freqDisplay.innerText = `${Math.round(currentFrequency)} kHz`;
@@ -575,7 +620,8 @@
                 freqDisplay.innerText = `${currentFrequency.toFixed(2)} MHz`;
             }
             
-            tuningNeedle.style.left = `calc(${currentDialPos}% * 0.82 + 9%)`; 
+            // 바늘의 가로 위치를 그리드 영역에 맞추어 오차 없이 반영
+            tuningNeedle.style.left = `${currentDialPos}%`; 
             processTuningAudio();
         }
 
@@ -586,7 +632,9 @@
             }
             const range = bandRanges[currentBand];
             let clampedVal = Math.max(range.min, Math.min(range.max, val));
-            currentDialPos = ((clampedVal - range.min) / (range.max - range.min)) * 100;
+            
+            // 주파수를 기하학적 백분율로 인코딩하여 물리 위치 매핑
+            currentDialPos = frequencyToDialPos(clampedVal, currentBand);
             
             const rotation = (currentDialPos / 100) * 360;
             knobTuneIndicator.style.transform = `rotate(${rotation}deg)`;
@@ -796,11 +844,11 @@
 
         function renderPresetMarkers() {
             presetMarkersContainer.innerHTML = '';
-            const range = bandRanges[currentBand];
             const activePresetStations = stations.filter(s => s.band === currentBand);
             
             activePresetStations.forEach(st => {
-                const percent = ((st.freq - range.min) / (range.max - range.min)) * 100;
+                // 프리셋 위치 계산도 보간 알고리즘을 사용해 정확한 비율로 변환
+                const percent = frequencyToDialPos(st.freq, currentBand);
                 if (percent >= 0 && percent <= 100) {
                     const marker = document.createElement('div');
                     marker.className = "absolute top-0 bottom-0 w-0.5 bg-amber-950/40 z-0";
@@ -967,9 +1015,12 @@
 
         function handleDialGlassMove(clientX) {
             const rect = dialGlassWindow.getBoundingClientRect();
-            const padding = rect.width * 0.09;
-            const usableWidth = rect.width - (padding * 2);
-            const relativeX = clientX - rect.left - padding;
+            
+            // 패딩(p-4 = 16px)과 그리드의 좌/우 너비(좌: 48px, 우: 40px)를 정밀하게 고려한 가동폭 계산
+            const paddingLeft = 16 + 48; // 64px (좌 레이블 시작점 자석 정합)
+            const paddingRight = 16 + 40; // 56px (우 단위 마감점 자석 정합)
+            const usableWidth = rect.width - paddingLeft - paddingRight;
+            const relativeX = clientX - rect.left - paddingLeft;
             
             let percentage = (relativeX / usableWidth) * 100;
             percentage = Math.max(0, Math.min(100, percentage));
@@ -1114,30 +1165,26 @@
                 try {
                     const parsedData = JSON.parse(event.target.result);
                     
-                    // 유효성 데이터 무결성 검증 (배열 검사)
                     if (!Array.isArray(parsedData)) {
                         throw new Error("JSON 루트 구조가 배열이 아닙니다.");
                     }
 
-                    // 필수 속성 구조 검증
                     const isValid = parsedData.every(item => {
                         return item.name && item.band && typeof item.freq === 'number' && item.url;
                     });
 
                     if (!isValid) {
-                        throw new Error("일부 항목에 이름(name), 밴드(band), 주파수(freq), 스트림 URL(url)이 누락되었습니다.");
+                        throw new Error("일부 항목에 정보가 누락되었습니다.");
                     }
 
-                    // 밴드 이름 적합성 검사
                     const bandsCheck = parsedData.every(item => ['AM', 'SW1', 'SW2', 'SW3'].includes(item.band));
                     if (!bandsCheck) {
                         throw new Error("지원하지 않는 주파수 밴드 명칭이 발견되었습니다.");
                     }
 
-                    // 커스텀 확인 모달 기동
                     showRetroConfirm(
                         "외부 주파수 목록 가져오기",
-                        `가져온 JSON 파일에 존재하는 총 ${parsedData.length}개의 전파 목록을 덮어씌워 보존하시겠습니까? (기존 리스트는 대체됩니다)`,
+                        `가져온 JSON 파일에 존재하는 총 ${parsedData.length}개의 전파 목록을 덮어씌워 보존하시겠습니까?`,
                         () => {
                             stations = parsedData;
                             savePresetStations();
@@ -1148,10 +1195,10 @@
                     showRetroConfirm(
                         "데이터 연동 실패",
                         `불러오기 실패: 올바른 구조의 라디오 설정 JSON 형식이 아닙니다.\n오류 정보: ${error.message}`,
-                        () => {} // 오류 경고용이므로 확인 후 닫히도록 바인딩
+                        () => {}
                     );
                 }
-                fileImportJson.value = ''; // 다음 파일을 대비한 리셋
+                fileImportJson.value = '';
             };
             reader.readAsText(file);
         });
