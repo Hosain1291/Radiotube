@@ -99,8 +99,8 @@
         <div id="youtube-iframe-target"></div>
     </div>
     
-    <!-- 오디오 엘리먼트 -->
-    <audio id="audio-stream-player" crossorigin="anonymous" loop></audio>
+    <!-- 오디오 엘리먼트 (CORS 문제 해결을 위해 crossorigin 제거 및 루프 처리) -->
+    <audio id="audio-stream-player" loop></audio>
 
     <div class="max-w-5xl w-full flex flex-col lg:flex-row gap-6 items-stretch">
         
@@ -578,6 +578,27 @@
             }
         }
 
+        // --- 브라우저 Autoplay 보안 조기 잠금 해제 시스템 ---
+        function unlockAudio() {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // 유저 모션을 낚아채 오디오 플레이어 권한을 획득
+            if (audioStreamPlayer.paused && audioStreamPlayer.src === "") {
+                audioStreamPlayer.play().then(() => {
+                    audioStreamPlayer.pause();
+                }).catch(() => {});
+            }
+        }
+
+        // 일반 오디오 에러 핸들러 연동
+        audioStreamPlayer.addEventListener('error', (e) => {
+            if (currentPlayingStationId && radioPower) {
+                console.error("Audio error event:", e);
+                showToast("오디오 주소에서 전파를 수신하지 못했습니다. (CORS 또는 스트림 단절)");
+            }
+        });
+
         // --- IFrame 맞춤 커스텀 확인 모달 제어 로직 ---
         let modalConfirmCallback = null;
         function showRetroConfirm(title, message, callback) {
@@ -675,6 +696,7 @@
 
         // --- 전원 제어 ---
         function togglePower() {
+            unlockAudio();
             if (!radioPower) {
                 radioPower = true;
                 volLbl.innerText = `${Math.round(masterVolume * 100)}%`;
@@ -722,6 +744,7 @@
         }
 
         function setVolume(pct) {
+            unlockAudio();
             if (pct <= 5) {
                 if (radioPower) togglePower();
                 knobVolIndicator.style.transform = `rotate(-135deg)`;
@@ -821,19 +844,28 @@
                         }
                     } else {
                         try {
-                            audioStreamPlayer.src = url;
-                            audioStreamPlayer.volume = stationVolume;
-                            
-                            audioStreamPlayer.addEventListener('loadedmetadata', function onMeta() {
+                            // Race-Condition 방지를 위해 src 설정 전에 몌타데이터 리스너를 결합
+                            const currentStationRef = closestStation;
+                            const onMetaLoaded = function() {
                                 const realDur = audioStreamPlayer.duration;
                                 if (realDur && isFinite(realDur) && realDur > 0) {
-                                    closestStation.duration = realDur;
-                                    audioStreamPlayer.currentTime = elapsedSeconds % realDur;
+                                    currentStationRef.duration = realDur;
+                                    try {
+                                        audioStreamPlayer.currentTime = elapsedSeconds % realDur;
+                                    } catch(err) {
+                                        console.warn("Time seeking blocked by browser cache context:", err);
+                                    }
                                 }
-                                audioStreamPlayer.removeEventListener('loadedmetadata', onMeta);
-                            });
+                                audioStreamPlayer.removeEventListener('loadedmetadata', onMetaLoaded);
+                            };
 
-                            audioStreamPlayer.play().catch(()=>{});
+                            audioStreamPlayer.addEventListener('loadedmetadata', onMetaLoaded);
+
+                            audioStreamPlayer.src = url;
+                            audioStreamPlayer.volume = stationVolume;
+                            audioStreamPlayer.play().catch((err) => {
+                                console.warn("오디오 오토플레이 보류:", err);
+                            });
                         } catch (e) {
                             console.error(e);
                         }
@@ -962,6 +994,7 @@
                 `;
                 
                 detailWrap.addEventListener('click', () => {
+                    unlockAudio();
                     setFrequencyValue(st.freq, st.band);
                     showToast(`[${st.name}] 수신 동조 완료`);
                 });
@@ -971,6 +1004,7 @@
                 deleteBtn.innerHTML = `<i data-lucide="trash-2" class="w-3.5 h-3.5"></i>`;
                 deleteBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    unlockAudio();
                     showRetroConfirm(
                         "주파수 삭제",
                         `'${st.name}' 주파수를 프리셋 리스트에서 완전히 지우시겠습니까?`,
@@ -1004,6 +1038,7 @@
             let lastAngle = 0;
 
             function onStart(e) {
+                unlockAudio();
                 active = true;
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                 const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -1050,6 +1085,7 @@
         });
 
         knobVolume.addEventListener('click', (e) => {
+            unlockAudio();
             if (e.target.closest('.w-8')) {
                 togglePower();
             }
@@ -1088,11 +1124,13 @@
         }
 
         dialGlassWindow.addEventListener('mousedown', (e) => {
+            unlockAudio();
             isDialDragging = true;
             handleDialGlassMove(e.clientX);
         });
 
         dialGlassWindow.addEventListener('touchstart', (e) => {
+            unlockAudio();
             isDialDragging = true;
             handleDialGlassMove(e.touches[0].clientX);
             e.preventDefault();
@@ -1114,16 +1152,19 @@
 
         // --- 일반 버튼 리스너 바인딩 ---
         btnTuneUp.addEventListener('click', () => {
+            unlockAudio();
             const step = currentBand === 'AM' ? 2.0 : 0.04;
             setFrequencyValue(currentFrequency + step, currentBand);
         });
 
         btnTuneDown.addEventListener('click', () => {
+            unlockAudio();
             const step = currentBand === 'AM' ? 2.0 : 0.04;
             setFrequencyValue(currentFrequency - step, currentBand);
         });
 
         knobBand.addEventListener('click', () => {
+            unlockAudio();
             rotateBand();
         });
 
