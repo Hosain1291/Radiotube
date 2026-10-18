@@ -631,8 +631,101 @@ select option { background: #1c0f0b; }
   .radio[data-model="wood"] .plate { letter-spacing: .3em; }
 }
 
+/* ───────── 캐서드럴 모델 (RT-1931) ───────── */
+:root {
+  --woodgrain-v: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='520'%3E%3Cfilter id='v' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.12 .004' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .20  0 0 0 0 .07  0 0 0 0 .02  0 0 0 1.4 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23v)'/%3E%3C/svg%3E");
+}
+.fret { display: none; }
+.chooser button { flex: 1 1 118px; padding: 9px 10px; gap: 8px; }
+.chooser .sw { width: 30px; }
+.sw.wd { background: linear-gradient(90deg, #cdbb92 0 40%, #1a0e08 40% 44%, #e4d9b8 44%), linear-gradient(#7b4f2d, #43250f); }
+.sw.ct { width: 22px; margin: 0 4px; border-radius: 11px 11px 3px 3px;
+  background: radial-gradient(circle at 50% 36%, #d8c590 0 24%, transparent 26%), linear-gradient(#a2602d, #5b2c10); }
+@media (min-width: 901px) {
+  .stage[data-model="cathedral"] { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); }
+}
+.radio[data-model="cathedral"] {
+  padding: 34px 22px 26px; margin-bottom: 30px;
+  border-radius: 50% 50% 6px 6px / 30% 30% 6px 6px;
+  background:
+    var(--woodgrain-v),
+    radial-gradient(ellipse 60% 45% at 28% 12%, rgba(255,210,150,.38), transparent 65%),
+    linear-gradient(180deg, #a2602d 0%, #7c4119 50%, #5b2c10 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255,220,170,.4),
+    inset 8px 0 14px rgba(255,200,140,.12),
+    inset -10px 0 16px rgba(0,0,0,.4),
+    inset 0 -8px 14px rgba(0,0,0,.45),
+    0 26px 30px -16px rgba(0,0,0,.65);
+}
+.radio[data-model="cathedral"]::before {
+  inset: 12px 12px 12px; border-radius: 50% 50% 4px 4px / 30% 30% 4px 4px;
+  border: 2px solid rgba(30,12,4,.55); box-shadow: 0 1px 0 rgba(255,210,160,.18);
+}
+.radio[data-model="cathedral"]::after { background: linear-gradient(90deg, rgba(255,230,190,.26) 0%, transparent 26%, transparent 72%, rgba(0,0,0,.26) 100%); }
+
+.radio[data-model="cathedral"] .speaker {
+  position: relative; width: 82%; aspect-ratio: 300 / 296; margin: 0 auto; padding: 0;
+  border-radius: 0; background: none; box-shadow: none;
+}
+.radio[data-model="cathedral"] .cloth { display: none; }
+.radio[data-model="cathedral"] .fret { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 0 rgba(255,215,165,.22)); }
+.cloth.playing + .fret { animation: hum .14s linear infinite; }
+
+.radio[data-model="cathedral"] .arch-wrap { position: relative; z-index: 3; width: 80%; margin: -36px auto 0; filter: drop-shadow(0 4px 5px rgba(0,0,0,.55)); }
+.radio[data-model="cathedral"] .arch {
+  padding: 28px 9px 11px; border-radius: 0; box-shadow: none;
+  background: linear-gradient(160deg, #ecdca8 0%, #a58a47 35%, #dac781 55%, #7b6430 100%);
+  clip-path: polygon(0 14%, 12% 6%, 26% 14%, 38% 4%, 50% 0, 62% 4%, 74% 14%, 88% 6%, 100% 14%, 100% 80%, 90% 100%, 10% 100%, 0 80%);
+}
+.radio[data-model="cathedral"] .dial-glass {
+  border-radius: 4px; padding: 34px 12px 8px;
+  background: linear-gradient(180deg, #e8dbb2, #d3c18f);
+  box-shadow: inset 0 0 12px rgba(60,35,10,.55), 0 0 0 1px rgba(40,25,5,.55);
+}
+.radio[data-model="cathedral"] .dial-glass::before { border-radius: 4px; }
+.radio[data-model="cathedral"] .eye { top: 7px; }
+
+.radio[data-model="cathedral"] .knobs {
+  margin-top: 14px; padding: 0 14px; align-items: center; gap: 6px 0;
+  grid-template-columns: 1fr 1fr; grid-template-areas: "tune tune" "vol band";
+}
+.radio[data-model="cathedral"] .kc-tune { grid-area: tune; }
+.radio[data-model="cathedral"] .kc-vol { grid-area: vol; }
+.radio[data-model="cathedral"] .kc-band { grid-area: band; }
+.radio[data-model="cathedral"] .klabel { color: rgba(250,228,190,.85); text-shadow: 0 1px 1px rgba(20,6,0,.8); }
+.radio[data-model="cathedral"] .klabel b { color: #ffe3a6; }
+.radio[data-model="cathedral"] .knob { box-shadow: 0 6px 8px rgba(0,0,0,.6), 0 0 0 3px #2a1208, 0 0 0 4px rgba(255,200,150,.2); background: #2a1208; }
+.radio[data-model="cathedral"] .knob.big { width: 72px; height: 72px; }
+.radio[data-model="cathedral"] .knob.small { width: 46px; height: 46px; }
+.radio[data-model="cathedral"] .kbody {
+  background: radial-gradient(circle at 35% 28%, #d09572 0%, #86472a 36%, #3d1b0e 82%);
+  box-shadow: inset 0 2px 3px rgba(255,235,210,.45), inset 0 -4px 6px rgba(0,0,0,.55);
+}
+.radio[data-model="cathedral"] .kbody::before { display: none; }
+.radio[data-model="cathedral"] .ptr { top: 7%; height: 13%; width: 3px; margin-left: -1.5px; background: #f2d9b0; box-shadow: none; }
+.radio[data-model="cathedral"] .pbtn { background: radial-gradient(circle at 35% 30%, #a0603c, #3d1b0e 75%); }
+
+.radio[data-model="cathedral"] .plate { margin-top: 16px; color: rgba(250,228,190,.7); text-shadow: 0 1px 1px rgba(20,6,0,.8); }
+.radio[data-model="cathedral"] .feet {
+  display: block; position: absolute; left: -16px; right: -16px; bottom: -18px; height: 30px;
+  border-radius: 3px 3px 6px 6px; border-top: 2px solid rgba(255,220,170,.5);
+  background: var(--woodgrain-v), linear-gradient(180deg, #b06e38, #7a3f18 60%, #4a220c);
+  box-shadow: inset 0 1px 2px rgba(255,220,170,.4), 0 8px 10px rgba(0,0,0,.45);
+}
+.radio[data-model="cathedral"] .feet i { display: none; }
+
+@media (max-width: 640px) {
+  .radio[data-model="cathedral"] { padding: 28px 14px 22px; }
+  .radio[data-model="cathedral"] .speaker { width: 90%; }
+  .radio[data-model="cathedral"] .arch-wrap { width: 96%; margin-top: -30px; }
+  .radio[data-model="cathedral"] .arch { padding: 24px 8px 10px; }
+  .radio[data-model="cathedral"] .dial-glass { padding: 34px 8px 8px; }
+  .radio[data-model="cathedral"] .knobs { padding: 0 6px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .cloth.playing, .lamp.tune, .live i { animation: none; }
+  .cloth.playing, .cloth.playing + .fret, .lamp.tune, .live i { animation: none; }
   .dial-glass::after { transition-duration: .3s; }
 }
 </style>
@@ -647,14 +740,40 @@ select option { background: #1c0f0b; }
   <!-- ───── 라디오 본체 ───── -->
   <section>
     <div class="chooser" role="group" aria-label="라디오 선택">
-      <button type="button" data-model="bakelite" aria-pressed="true"><span class="sw bk"></span><span><b>RT-1946</b><small>베이클라이트 · 아치 다이얼</small></span></button>
-      <button type="button" data-model="wood" aria-pressed="false"><span class="sw wd"></span><span><b>RT-1955</b><small>월넛 캐비닛 · 바늘 다이얼</small></span></button>
+      <button type="button" data-model="bakelite" aria-pressed="true"><span class="sw bk"></span><span><b>RT-1946</b><small>베이클라이트</small></span></button>
+      <button type="button" data-model="wood" aria-pressed="false"><span class="sw wd"></span><span><b>RT-1955</b><small>월넛 캐비닛</small></span></button>
+      <button type="button" data-model="cathedral" aria-pressed="false"><span class="sw ct"></span><span><b>RT-1931</b><small>캐서드럴</small></span></button>
     </div>
 
     <div class="radio" id="radio" data-model="bakelite">
      <div class="face">
 
-      <div class="speaker"><div class="cloth" id="cloth"></div></div>
+      <div class="speaker"><div class="cloth" id="cloth"></div>
+        <svg class="fret" viewBox="0 -16 300 296" aria-hidden="true">
+          <defs>
+            <pattern id="fcloth" width="4" height="4" patternUnits="userSpaceOnUse">
+              <rect width="4" height="4" fill="#b99c6a"/><path d="M0 0H4M0 2H4" stroke="#8d7144" stroke-width=".7" opacity=".7"/><path d="M0 0V4M2 0V4" stroke="#d9c595" stroke-width=".5" opacity=".6"/>
+            </pattern>
+            <radialGradient id="rosette" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#c9c9c9"/><stop offset="1" stop-color="#6d6d6d"/></radialGradient>
+          </defs>
+          <path d="M22 262 C8 170 14 100 78 46 C112 16 188 16 222 46 C286 100 292 170 278 262" fill="none" stroke="#2a1006" stroke-opacity=".55" stroke-width="2"/>
+          <g fill="url(#fcloth)" stroke="#1f0c04" stroke-width="3" stroke-linejoin="round">
+            <ellipse cx="92" cy="58" rx="38" ry="24" transform="rotate(-24 92 58)"/>
+            <ellipse cx="208" cy="58" rx="38" ry="24" transform="rotate(24 208 58)"/>
+            <ellipse cx="62" cy="134" rx="33" ry="46" transform="rotate(8 62 134)"/>
+            <ellipse cx="238" cy="134" rx="33" ry="46" transform="rotate(-8 238 134)"/>
+            <ellipse cx="108" cy="218" rx="46" ry="27" transform="rotate(-38 108 218)"/>
+            <ellipse cx="192" cy="218" rx="46" ry="27" transform="rotate(38 192 218)"/>
+            <ellipse cx="137" cy="118" rx="8" ry="50" transform="rotate(5 137 118)"/>
+            <ellipse cx="163" cy="118" rx="8" ry="50" transform="rotate(-5 163 118)"/>
+            <ellipse cx="117" cy="138" rx="7" ry="40" transform="rotate(16 117 138)"/>
+            <ellipse cx="183" cy="138" rx="7" ry="40" transform="rotate(-16 183 138)"/>
+          </g>
+          <g stroke="#3a1c0a" stroke-width="1.2">
+            <circle cx="150" cy="-4" r="8" fill="url(#rosette)"/><circle cx="26" cy="64" r="7" fill="url(#rosette)"/><circle cx="274" cy="64" r="7" fill="url(#rosette)"/>
+          </g>
+        </svg>
+      </div>
 
       <div class="panel">
       <div class="arch-wrap">
@@ -1466,7 +1585,8 @@ holdRepeat($('btn-tune-up'), 0.5);
 const MODEL_KEY = 'radiotube_model_v1';
 const MODELS = {
   bakelite: { label: 'RT-1946 베이클라이트', code: 'RT-1946' },
-  wood:     { label: 'RT-1955 월넛 캐비닛', code: 'RT-1955' }
+  wood:     { label: 'RT-1955 월넛 캐비닛', code: 'RT-1955' },
+  cathedral:{ label: 'RT-1931 캐서드럴', code: 'RT-1931' }
 };
 const stageEl = $('stage');
 const plateEl = $('plate');
