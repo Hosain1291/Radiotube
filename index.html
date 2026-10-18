@@ -26,8 +26,8 @@
   --line: rgba(193,154,91,.28);
   --serif: 'HsGlidingSerif', 'Noto Serif KR', 'Nanum Myeongjo', serif;
   --mono: 'Share Tech Mono', ui-monospace, Menlo, Consolas, monospace;
-  --marble: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.008 .022' numOctaves='4' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42  0 0 0 0 .22  0 0 0 0 .14  0 0 0 .85 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --grain: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --marble: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.008 .022' numOctaves='4' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42  0 0 0 0 .22  0 0 0 0 .14  0 0 0 .85 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 * { box-sizing: border-box; }
@@ -464,6 +464,173 @@ select option { background: #1c0f0b; }
   .knob.small { width: 48px; height: 48px; }
 }
 
+/* ───────── 라디오 선택기 ───────── */
+.chooser { display: flex; gap: 8px; margin: 0 0 14px; flex-wrap: wrap; }
+.chooser button {
+  flex: 1 1 150px; display: flex; align-items: center; gap: 10px; text-align: left;
+  padding: 9px 12px; border-radius: 12px; border: 0; cursor: pointer;
+  color: #3a2a20; background: rgba(255,255,255,.55);
+  box-shadow: inset 0 0 0 1px rgba(60,40,30,.25);
+  font-size: 11px; line-height: 1.35;
+}
+.chooser button b { display: block; font-family: var(--mono); font-weight: normal; font-size: 13px; letter-spacing: .06em; }
+.chooser button small { display: block; font-size: 11px; opacity: .75; }
+.chooser button[aria-pressed="true"] { background: #2a160f; color: var(--cream); box-shadow: 0 0 0 2px var(--brass), 0 6px 12px rgba(0,0,0,.35); }
+.chooser button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.chooser .sw { width: 38px; height: 28px; border-radius: 5px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.45); }
+.sw.bk { width: 22px; margin: 0 8px; border-radius: 12px 12px 4px 4px;
+  background: radial-gradient(circle at 50% 38%, #c9b88a 0 26%, transparent 28%), linear-gradient(#4a2e24, #170a07); }
+.sw.wd { background: linear-gradient(90deg, #cdbb92 0 40%, #1a0e08 40% 44%, #e4d9b8 44%), linear-gradient(#7b4f2d, #43250f); background-blend-mode: normal; }
+
+/* ───────── 월넛 캐비닛 모델 (RT-1955) ───────── */
+:root {
+  --woodgrain: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='260'%3E%3Cfilter id='w' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .17' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .13  0 0 0 0 .06  0 0 0 0 .02  0 0 0 1.5 -.55'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+}
+.feet { display: none; }
+@media (min-width: 901px) {
+  .stage[data-model="wood"] { grid-template-columns: minmax(0, 640px) minmax(0, 1fr); }
+}
+.radio[data-model="wood"] {
+  padding: 16px 16px 22px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  background:
+    var(--woodgrain),
+    radial-gradient(ellipse 70% 40% at 25% 0%, rgba(255,230,190,.2), transparent 65%),
+    linear-gradient(180deg, #86582f 0%, #62391d 55%, #43250f 100%);
+  box-shadow:
+    inset 0 2px 2px rgba(255,235,200,.35),
+    inset 0 -6px 12px rgba(0,0,0,.5),
+    inset 4px 0 8px rgba(0,0,0,.25),
+    0 26px 30px -16px rgba(0,0,0,.6);
+}
+.radio[data-model="wood"]::before { inset: 6px; border-radius: 8px; border: 1px solid rgba(255,225,170,.16); box-shadow: none; }
+.radio[data-model="wood"]::after { background: linear-gradient(105deg, rgba(255,255,255,.12) 0%, transparent 30%, transparent 75%, rgba(0,0,0,.18) 100%); }
+
+.radio[data-model="wood"] .face {
+  position: relative; display: grid; grid-template-columns: .8fr 1fr; align-items: stretch;
+  padding: 12px; border-radius: 6px;
+  background: linear-gradient(135deg, #8a5c35 0%, #4e2e18 48%, #6b4426 100%);
+  box-shadow: inset 0 1px 1px rgba(255,235,200,.45), inset 0 -2px 3px rgba(0,0,0,.5), 0 2px 5px rgba(0,0,0,.5);
+}
+.radio[data-model="wood"] .face::before {
+  content: ""; position: absolute; inset: 12px; border-radius: 2px; z-index: 6; pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.6), inset 0 0 12px rgba(0,0,0,.6);
+}
+
+/* 스피커 그릴 (마름모 직조) */
+.radio[data-model="wood"] .speaker {
+  position: relative; width: auto; aspect-ratio: auto; margin: 0; padding: 0; min-height: 240px;
+  border-radius: 2px 0 0 2px; background: #1a0e08; box-shadow: none;
+}
+.radio[data-model="wood"] .cloth {
+  position: absolute; inset: 0; width: auto; height: auto; border-radius: 2px 0 0 2px;
+  background:
+    var(--grain),
+    repeating-linear-gradient(33deg, transparent 0 26px, rgba(35,20,8,.5) 26px 28px),
+    repeating-linear-gradient(-33deg, transparent 0 26px, rgba(35,20,8,.5) 26px 28px),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, #bfa874 0 2px, #d6c28f 2px 4px, #c8b27e 4px 5px);
+  box-shadow: inset 0 0 22px rgba(0,0,0,.55);
+}
+.radio[data-model="wood"] .cloth::after { background: radial-gradient(circle at 30% 20%, rgba(255,245,215,.25), transparent 60%); }
+.radio[data-model="wood"] .speaker::after { /* 보석 파일럿 램프 */
+  content: ""; position: absolute; right: -6px; top: 40%; width: 12px; height: 12px; border-radius: 50%; z-index: 7;
+  background: radial-gradient(circle at 35% 30%, #fff, #bbb 40%, #555);
+  box-shadow: 0 0 0 2px #2a1810;
+  transition: background .6s, box-shadow .6s;
+}
+.radio.lit[data-model="wood"] .speaker::after {
+  background: radial-gradient(circle at 35% 30%, #fff6d8, #ffb347 45%, #a45a00);
+  box-shadow: 0 0 0 2px #2a1810, 0 0 10px 3px rgba(255,170,60,.8);
+}
+
+/* 오른쪽 패널: 다이얼 + 노브 */
+.radio[data-model="wood"] .panel { position: relative; display: flex; flex-direction: column; padding-left: 10px; background: #d9ccaa; }
+.radio[data-model="wood"] .panel::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; z-index: 2;
+  background: repeating-linear-gradient(90deg, #120a06 0 2px, #3a2418 2px 3px);
+}
+.radio[data-model="wood"] .arch-wrap { width: 100%; margin: 0; flex: 1; }
+.radio[data-model="wood"] .arch { height: 100%; padding: 0; border-radius: 0; background: none; box-shadow: none; }
+.radio[data-model="wood"] .dial-glass {
+  height: 100%; border-radius: 0; padding: 30px 16px 8px;
+  background: linear-gradient(180deg, #efe6cc, #ddd0aa);
+  box-shadow: inset 0 0 12px rgba(80,50,20,.45);
+  outline: 1px solid rgba(60,40,20,.25); outline-offset: -13px;
+}
+.radio[data-model="wood"] .dial-glass:focus-visible { outline: 3px solid var(--amber); outline-offset: -3px; }
+.radio[data-model="wood"] .dial-glass::before {
+  inset: 7px; background: none; border: 1px solid rgba(60,40,20,.35); border-radius: 12px 12px 3px 3px;
+}
+.radio[data-model="wood"] .dial-glass::after {
+  background: radial-gradient(ellipse 85% 75% at 50% 60%, rgba(255,222,150,.9), rgba(238,176,80,.55) 65%, rgba(150,85,25,.35));
+}
+.radio[data-model="wood"] .eye { left: auto; right: 18px; top: 10px; margin-left: 0; width: 22px; height: 22px; }
+@media (min-width: 481px) { .radio[data-model="wood"] .scale-row { font-size: 8.5px; } }
+
+/* 황동 쐐기 바늘 */
+.radio[data-model="wood"] #tuning-needle { filter: drop-shadow(1px 3px 2px rgba(0,0,0,.45)); }
+.radio[data-model="wood"] #tuning-needle::before {
+  left: -5px; width: 10px; box-shadow: none;
+  background: linear-gradient(90deg, #8a6a2e, #f4e6b6 45%, #7b5c24);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.radio[data-model="wood"] #tuning-needle b {
+  left: -10px; top: auto; bottom: -8px; width: 20px; height: 20px;
+  background: radial-gradient(circle at 35% 30%, #fff9e6, #d8c9a0 60%, #8a7646); border: 1px solid #5a4a22;
+}
+
+/* 노브 플레이트 */
+.radio[data-model="wood"] .knobs {
+  margin-top: 0; padding: 10px 8px 14px; gap: 4px; align-items: start; grid-template-columns: repeat(3, 1fr);
+  background: repeating-linear-gradient(0deg, rgba(60,40,20,.18) 0 1px, transparent 1px 4px), linear-gradient(180deg, #e4d9b8, #d3c59d);
+  box-shadow: inset 0 3px 5px rgba(60,40,20,.35);
+}
+.radio[data-model="wood"] .kc-vol { order: 1; }
+.radio[data-model="wood"] .kc-band { order: 2; }
+.radio[data-model="wood"] .kc-tune { order: 3; }
+.radio[data-model="wood"] .kcol { flex-direction: column-reverse; gap: 8px; }
+.radio[data-model="wood"] .klabel { color: #2b1b0e; text-shadow: none; font-size: 8px; letter-spacing: .12em; }
+.radio[data-model="wood"] .klabel b { color: #6b3a14; }
+.radio[data-model="wood"] .knob.small, .radio[data-model="wood"] .knob.big { width: 54px; height: 54px; }
+.radio[data-model="wood"] .kbody {
+  background: repeating-conic-gradient(from 0deg, #150a05 0deg 4deg, #3b2314 4deg 8deg);
+  box-shadow: inset 0 2px 2px rgba(255,255,255,.2), inset 0 -3px 5px rgba(0,0,0,.7);
+}
+.radio[data-model="wood"] .kbody::before {
+  inset: 20%; background: conic-gradient(from 20deg, #e9d79d, #8a6a30, #f3e5b4, #7a5c26, #e9d79d);
+  box-shadow: 0 1px 3px rgba(0,0,0,.7), inset 0 0 0 2px rgba(60,40,10,.35);
+}
+.radio[data-model="wood"] .ptr { top: 4%; height: 11%; width: 3px; margin-left: -1.5px; background: #f1e2b0; box-shadow: none; }
+.radio[data-model="wood"] .tune-row { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; row-gap: 6px; gap: 6px 0; }
+.radio[data-model="wood"] .tune-row .knob { grid-column: 1 / -1; order: -1; }
+.radio[data-model="wood"] .pbtn { width: 22px; height: 22px; font-size: 11px; }
+
+/* 하단 명판 · 황동 다리 */
+.radio[data-model="wood"] .plate { margin-top: 12px; color: rgba(245,225,185,.85); letter-spacing: .5em; text-shadow: 0 -1px 0 rgba(0,0,0,.7); }
+.radio[data-model="wood"] .feet { display: block; }
+.feet i {
+  position: absolute; bottom: -12px; width: 44px; height: 14px; border-radius: 3px 3px 6px 6px;
+  background: linear-gradient(90deg, #6b6b6b, #f0f0f0 40%, #8a8a8a 70%, #555);
+  box-shadow: 0 4px 5px rgba(0,0,0,.5);
+}
+.feet i:first-child { left: 34px; }
+.feet i:last-child { right: 34px; }
+
+@media (max-width: 640px) {
+  .radio[data-model="wood"] .face { grid-template-columns: 1fr; }
+  .radio[data-model="wood"] .speaker { min-height: 96px; border-radius: 2px 2px 0 0; }
+  .radio[data-model="wood"] .cloth { border-radius: 2px 2px 0 0; }
+  .radio[data-model="wood"] .panel { padding-left: 0; padding-top: 10px; }
+  .radio[data-model="wood"] .panel::before {
+    width: auto; height: 10px; right: 0; bottom: auto;
+    background: repeating-linear-gradient(0deg, #120a06 0 2px, #3a2418 2px 3px);
+  }
+  .radio[data-model="wood"] .speaker::after { right: 50%; top: auto; bottom: -6px; }
+  .radio[data-model="wood"] .plate { letter-spacing: .3em; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cloth.playing, .lamp.tune, .live i { animation: none; }
   .dial-glass::after { transition-duration: .3s; }
@@ -475,14 +642,21 @@ select option { background: #1c0f0b; }
 <div id="yt-box"><div id="youtube-iframe-target"></div></div>
 <audio id="audio-stream-player" loop></audio>
 
-<main class="stage">
+<main class="stage" id="stage" data-model="bakelite">
 
   <!-- ───── 라디오 본체 ───── -->
   <section>
-    <div class="radio" id="radio">
+    <div class="chooser" role="group" aria-label="라디오 선택">
+      <button type="button" data-model="bakelite" aria-pressed="true"><span class="sw bk"></span><span><b>RT-1946</b><small>베이클라이트 · 아치 다이얼</small></span></button>
+      <button type="button" data-model="wood" aria-pressed="false"><span class="sw wd"></span><span><b>RT-1955</b><small>월넛 캐비닛 · 바늘 다이얼</small></span></button>
+    </div>
+
+    <div class="radio" id="radio" data-model="bakelite">
+     <div class="face">
 
       <div class="speaker"><div class="cloth" id="cloth"></div></div>
 
+      <div class="panel">
       <div class="arch-wrap">
         <div class="arch">
           <div class="dial-glass" id="dial-glass-window" tabindex="0" role="slider"
@@ -504,14 +678,14 @@ select option { background: #1c0f0b; }
       </div>
 
       <div class="knobs">
-        <div class="kcol">
+        <div class="kcol kc-band">
           <div class="knob small" id="knob-band" role="button" tabindex="0" aria-label="밴드 선택 (누르면 전환)">
             <div class="kbody" id="knob-band-body"><i class="ptr"></i></div>
           </div>
           <span class="klabel">BAND <b id="band-lbl">AM</b></span>
         </div>
 
-        <div class="kcol">
+        <div class="kcol kc-tune">
           <div class="tune-row">
             <button class="pbtn" id="btn-tune-down" aria-label="주파수 낮추기" data-icon="left"></button>
             <div class="knob big" id="knob-tuning" role="slider" tabindex="0" aria-label="주파수 튜닝 노브"
@@ -523,7 +697,7 @@ select option { background: #1c0f0b; }
           <span class="klabel">TUNING</span>
         </div>
 
-        <div class="kcol">
+        <div class="kcol kc-vol">
           <div class="knob small" id="knob-volume" role="slider" tabindex="0" aria-label="전원 및 볼륨"
                aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
             <div class="kbody" id="knob-vol-body"><i class="ptr"></i></div>
@@ -532,7 +706,11 @@ select option { background: #1c0f0b; }
         </div>
       </div>
 
-      <div class="plate">RADIOTUBE · RT-1946</div>
+      </div>
+     </div>
+
+      <div class="feet"><i></i><i></i></div>
+      <div class="plate" id="plate">RADIOTUBE · RT-1946</div>
     </div>
     <p class="hint">노브를 손가락으로 돌리거나, 다이얼 유리창을 좌우로 문질러 바늘을 움직여 보세요.<br>오른쪽 노브를 한 번 누르면 전원이 켜집니다.</p>
   </section>
@@ -1284,7 +1462,31 @@ function holdRepeat(btn, step) {
 holdRepeat($('btn-tune-down'), -0.5);
 holdRepeat($('btn-tune-up'), 0.5);
 
+/* ───────── 라디오 모델 선택 ───────── */
+const MODEL_KEY = 'radiotube_model_v1';
+const MODELS = {
+  bakelite: { label: 'RT-1946 베이클라이트', code: 'RT-1946' },
+  wood:     { label: 'RT-1955 월넛 캐비닛', code: 'RT-1955' }
+};
+const stageEl = $('stage');
+const plateEl = $('plate');
+function setModel(name, announce) {
+  if (!MODELS[name]) name = 'bakelite';
+  stageEl.dataset.model = name;
+  radioEl.dataset.model = name;
+  document.querySelectorAll('.chooser button').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.model === name)));
+  plateEl.textContent = 'RADIOTUBE · ' + MODELS[name].code;
+  try { localStorage.setItem(MODEL_KEY, name); } catch (e) {}
+  if (announce) showToast(MODELS[name].label + '(으)로 교체했습니다.');
+}
+document.querySelectorAll('.chooser button').forEach(b =>
+  b.addEventListener('click', () => setModel(b.dataset.model, true)));
+
 /* ───────── 초기화 ───────── */
+let savedModel = 'bakelite';
+try { savedModel = localStorage.getItem(MODEL_KEY) || 'bakelite'; } catch (e) {}
+setModel(savedModel, false);
 syncBandSelectorUI();
 setKnobAngle('knob-vol-body', -135);
 loadPresetStations();
