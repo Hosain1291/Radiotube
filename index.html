@@ -635,97 +635,129 @@ select option { background: #1c0f0b; }
 :root {
   --woodgrain-v: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='520'%3E%3Cfilter id='v' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.12 .004' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .20  0 0 0 0 .07  0 0 0 0 .02  0 0 0 1.4 -.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23v)'/%3E%3C/svg%3E");
 }
-.fret { display: none; }
+.fret, .cab-lines { display: none; }
+.cab { position: relative; }
 .chooser button { flex: 1 1 118px; padding: 9px 10px; gap: 8px; }
 .chooser .sw { width: 30px; }
 .sw.wd { background: linear-gradient(90deg, #cdbb92 0 40%, #1a0e08 40% 44%, #e4d9b8 44%), linear-gradient(#7b4f2d, #43250f); }
-.sw.ct { width: 22px; margin: 0 4px; border-radius: 11px 11px 3px 3px;
-  background: radial-gradient(circle at 50% 36%, #d8c590 0 24%, transparent 26%), linear-gradient(#a2602d, #5b2c10); }
+.sw.ct { width: 22px; margin: 0 4px; clip-path: polygon(0 100%, 0 45%, 15% 18%, 50% 0, 85% 18%, 100% 45%, 100% 100%); border-radius: 0;
+  background: radial-gradient(circle at 50% 40%, #d8c590 0 22%, transparent 24%), linear-gradient(#a2602d, #5b2c10); }
 @media (min-width: 901px) {
   .stage[data-model="cathedral"] { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); }
 }
+
+/* 고딕 아치 캐비닛 */
+.stage[data-model="cathedral"] .cab { filter: drop-shadow(0 22px 18px rgba(0,0,0,.45)); margin-bottom: 30px; }
+.stage[data-model="cathedral"] .cab::after { /* 계단식 받침대 */
+  content: ""; position: absolute; left: -16px; right: -16px; bottom: -20px; height: 30px; z-index: 4;
+  border-radius: 4px 4px 7px 7px;
+  background:
+    linear-gradient(180deg, rgba(255,225,180,.55) 0 2px, transparent 2px 9px, rgba(0,0,0,.28) 9px 10px, rgba(255,225,180,.2) 10px 11px, transparent 11px),
+    var(--woodgrain-v),
+    linear-gradient(180deg, #b47240, #7a3f18 60%, #4a220c);
+  box-shadow: inset 0 -3px 5px rgba(0,0,0,.4);
+}
 .radio[data-model="cathedral"] {
-  padding: 34px 22px 26px; margin-bottom: 30px;
-  border-radius: 50% 50% 6px 6px / 30% 30% 6px 6px;
+  padding: 40px 22px 34px;
+  border-radius: 0;
+  clip-path: polygon(0.00% 100.00%, 0.00% 36.50%, 0.30% 32.93%, 1.18% 29.39%, 2.65% 25.92%, 4.69% 22.54%, 7.28% 19.29%, 10.39% 16.19%, 14.00% 13.28%, 18.08% 10.58%, 22.59% 8.12%, 27.48% 5.91%, 32.72% 3.99%, 38.25% 2.36%, 44.03% 1.03%, 50.00% 0.04%, 50.00% 0.04%, 55.97% 1.03%, 61.75% 2.36%, 67.28% 3.99%, 72.52% 5.91%, 77.41% 8.12%, 81.92% 10.58%, 86.00% 13.28%, 89.61% 16.19%, 92.72% 19.29%, 95.31% 22.54%, 97.35% 25.92%, 98.82% 29.39%, 99.70% 32.93%, 100.00% 36.50%, 100.00% 100.00%);
   background:
     var(--woodgrain-v),
-    radial-gradient(ellipse 60% 45% at 28% 12%, rgba(255,210,150,.38), transparent 65%),
-    linear-gradient(180deg, #a2602d 0%, #7c4119 50%, #5b2c10 100%);
-  box-shadow:
-    inset 0 2px 3px rgba(255,220,170,.4),
-    inset 8px 0 14px rgba(255,200,140,.12),
-    inset -10px 0 16px rgba(0,0,0,.4),
-    inset 0 -8px 14px rgba(0,0,0,.45),
-    0 26px 30px -16px rgba(0,0,0,.65);
+    radial-gradient(ellipse 34% 46% at 30% 22%, rgba(255,214,160,.34), transparent 70%),
+    radial-gradient(ellipse 50% 35% at 50% 100%, rgba(0,0,0,.3), transparent 70%),
+    linear-gradient(90deg, #6a3313 0%, #a6642f 18%, #9a5a28 50%, #874a1f 80%, #55280d 100%);
+  box-shadow: inset 0 -10px 16px rgba(0,0,0,.4);
 }
-.radio[data-model="cathedral"]::before {
-  inset: 12px 12px 12px; border-radius: 50% 50% 4px 4px / 30% 30% 4px 4px;
-  border: 2px solid rgba(30,12,4,.55); box-shadow: 0 1px 0 rgba(255,210,160,.18);
-}
-.radio[data-model="cathedral"]::after { background: linear-gradient(90deg, rgba(255,230,190,.26) 0%, transparent 26%, transparent 72%, rgba(0,0,0,.26) 100%); }
+.radio[data-model="cathedral"]::before { display: none; }
+.radio[data-model="cathedral"]::after { background: linear-gradient(90deg, rgba(255,232,195,.22) 0%, transparent 22%, transparent 76%, rgba(0,0,0,.22) 100%); }
+.radio[data-model="cathedral"] .cab-lines { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.radio[data-model="cathedral"] .face, .radio[data-model="cathedral"] .plate { position: relative; }
 
+/* 투각 그릴 */
 .radio[data-model="cathedral"] .speaker {
-  position: relative; width: 82%; aspect-ratio: 300 / 296; margin: 0 auto; padding: 0;
+  position: relative; width: 80%; aspect-ratio: 300 / 312; margin: 0 auto; padding: 0;
   border-radius: 0; background: none; box-shadow: none;
 }
 .radio[data-model="cathedral"] .cloth { display: none; }
-.radio[data-model="cathedral"] .fret { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 0 rgba(255,215,165,.22)); }
+.radio[data-model="cathedral"] .fret { display: block; width: 100%; height: 100%; overflow: visible; }
+.fret .fglow { opacity: 0; transition: opacity 3s cubic-bezier(.25,1,.5,1); mix-blend-mode: multiply; }
+.radio.lit .fret .fglow { opacity: .7; }
 .cloth.playing + .fret { animation: hum .14s linear infinite; }
 
-.radio[data-model="cathedral"] .arch-wrap { position: relative; z-index: 3; width: 80%; margin: -36px auto 0; filter: drop-shadow(0 4px 5px rgba(0,0,0,.55)); }
+/* 황동 방패 에스커천 */
+.radio[data-model="cathedral"] .arch-wrap {
+  position: relative; z-index: 3; width: 72%; margin: -46px auto 0;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,.55));
+}
 .radio[data-model="cathedral"] .arch {
-  padding: 28px 9px 11px; border-radius: 0; box-shadow: none;
-  background: linear-gradient(160deg, #ecdca8 0%, #a58a47 35%, #dac781 55%, #7b6430 100%);
-  clip-path: polygon(0 14%, 12% 6%, 26% 14%, 38% 4%, 50% 0, 62% 4%, 74% 14%, 88% 6%, 100% 14%, 100% 80%, 90% 100%, 10% 100%, 0 80%);
+  padding: 28px 11px 30px; border-radius: 0; box-shadow: none;
+  background:
+    repeating-linear-gradient(45deg, rgba(60,40,0,.07) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse 60% 40% at 30% 15%, rgba(255,250,220,.65), transparent 70%),
+    linear-gradient(160deg, #efe0ad 0%, #a68a46 32%, #dcc882 55%, #8a7036 78%, #5e4a1f 100%);
+  clip-path: polygon(0 15%, 10% 7%, 22% 13%, 34% 4%, 44% 9%, 50% 0, 56% 9%, 66% 4%, 78% 13%, 90% 7%, 100% 15%, 100% 76%, 95% 86%, 64% 90%, 50% 100%, 36% 90%, 5% 86%, 0 76%);
+}
+.radio[data-model="cathedral"] .arch::before { /* 새김 테두리 */
+  content: ""; position: absolute; inset: 5px; pointer-events: none;
+  clip-path: polygon(0 15%, 10% 7%, 22% 13%, 34% 4%, 44% 9%, 50% 0, 56% 9%, 66% 4%, 78% 13%, 90% 7%, 100% 15%, 100% 76%, 95% 86%, 64% 90%, 50% 100%, 36% 90%, 5% 86%, 0 76%);
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px rgba(70,50,10,.55);
+}
+.radio[data-model="cathedral"] .arch::after { /* 아래쪽 장식 점 */
+  content: ""; position: absolute; left: 50%; bottom: 12px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff6d0, #a88a40 60%, #5e4a1f);
+  box-shadow: 0 1px 1px rgba(0,0,0,.5);
 }
 .radio[data-model="cathedral"] .dial-glass {
-  border-radius: 4px; padding: 34px 12px 8px;
-  background: linear-gradient(180deg, #e8dbb2, #d3c18f);
-  box-shadow: inset 0 0 12px rgba(60,35,10,.55), 0 0 0 1px rgba(40,25,5,.55);
+  border-radius: 22px 22px 4px 4px; padding: 34px 10px 8px;
+  background: linear-gradient(180deg, #ece0b9, #d6c492);
+  box-shadow: inset 0 0 12px rgba(60,35,10,.55), 0 0 0 1.5px rgba(50,32,6,.7), 0 0 0 3px rgba(255,240,200,.35);
 }
-.radio[data-model="cathedral"] .dial-glass::before { border-radius: 4px; }
+.radio[data-model="cathedral"] .dial-glass::before { border-radius: 22px 22px 4px 4px; }
 .radio[data-model="cathedral"] .eye { top: 7px; }
 
+/* 노브 */
 .radio[data-model="cathedral"] .knobs {
-  margin-top: 14px; padding: 0 14px; align-items: center; gap: 6px 0;
+  margin-top: 16px; padding: 0 22px; align-items: center; gap: 4px 0;
   grid-template-columns: 1fr 1fr; grid-template-areas: "tune tune" "vol band";
 }
 .radio[data-model="cathedral"] .kc-tune { grid-area: tune; }
 .radio[data-model="cathedral"] .kc-vol { grid-area: vol; }
 .radio[data-model="cathedral"] .kc-band { grid-area: band; }
-.radio[data-model="cathedral"] .klabel { color: rgba(250,228,190,.85); text-shadow: 0 1px 1px rgba(20,6,0,.8); }
+.radio[data-model="cathedral"] .klabel { color: rgba(250,228,190,.82); text-shadow: 0 1px 1px rgba(20,6,0,.85); }
 .radio[data-model="cathedral"] .klabel b { color: #ffe3a6; }
-.radio[data-model="cathedral"] .knob { box-shadow: 0 6px 8px rgba(0,0,0,.6), 0 0 0 3px #2a1208, 0 0 0 4px rgba(255,200,150,.2); background: #2a1208; }
-.radio[data-model="cathedral"] .knob.big { width: 72px; height: 72px; }
-.radio[data-model="cathedral"] .knob.small { width: 46px; height: 46px; }
+.radio[data-model="cathedral"] .knob { background: #2a1208; box-shadow: 0 6px 7px rgba(0,0,0,.6), 0 0 0 3px #3a1a0b, 0 0 0 4px rgba(255,200,150,.22); }
+.radio[data-model="cathedral"] .knob.big { width: 62px; height: 62px; }
+.radio[data-model="cathedral"] .knob.small { width: 42px; height: 42px; }
 .radio[data-model="cathedral"] .kbody {
-  background: radial-gradient(circle at 35% 28%, #d09572 0%, #86472a 36%, #3d1b0e 82%);
-  box-shadow: inset 0 2px 3px rgba(255,235,210,.45), inset 0 -4px 6px rgba(0,0,0,.55);
+  background:
+    radial-gradient(ellipse 40% 26% at 38% 24%, rgba(255,230,205,.7), transparent 70%),
+    radial-gradient(circle at 50% 45%, #9a4f2c 0%, #6e3119 52%, #3a170a 86%);
+  box-shadow: inset 0 2px 3px rgba(255,235,210,.35), inset 0 -5px 7px rgba(0,0,0,.6);
 }
-.radio[data-model="cathedral"] .kbody::before { display: none; }
-.radio[data-model="cathedral"] .ptr { top: 7%; height: 13%; width: 3px; margin-left: -1.5px; background: #f2d9b0; box-shadow: none; }
-.radio[data-model="cathedral"] .pbtn { background: radial-gradient(circle at 35% 30%, #a0603c, #3d1b0e 75%); }
+.radio[data-model="cathedral"] .kbody::before {
+  inset: 14%; background: transparent;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,220,190,.25);
+}
+.radio[data-model="cathedral"] .ptr { top: 6%; height: 12%; width: 3px; margin-left: -1.5px; background: #f2d9b0; box-shadow: none; }
+.radio[data-model="cathedral"] .pbtn { width: 24px; height: 24px; background: radial-gradient(circle at 35% 30%, #a0603c, #3d1b0e 75%); }
 
-.radio[data-model="cathedral"] .plate { margin-top: 16px; color: rgba(250,228,190,.7); text-shadow: 0 1px 1px rgba(20,6,0,.8); }
-.radio[data-model="cathedral"] .feet {
-  display: block; position: absolute; left: -16px; right: -16px; bottom: -18px; height: 30px;
-  border-radius: 3px 3px 6px 6px; border-top: 2px solid rgba(255,220,170,.5);
-  background: var(--woodgrain-v), linear-gradient(180deg, #b06e38, #7a3f18 60%, #4a220c);
-  box-shadow: inset 0 1px 2px rgba(255,220,170,.4), 0 8px 10px rgba(0,0,0,.45);
-}
-.radio[data-model="cathedral"] .feet i { display: none; }
+.radio[data-model="cathedral"] .plate { margin-top: 14px; color: rgba(250,228,190,.7); text-shadow: 0 1px 1px rgba(20,6,0,.85); letter-spacing: .38em; }
+.radio[data-model="cathedral"] .feet { display: none; }
 
 @media (max-width: 640px) {
-  .radio[data-model="cathedral"] { padding: 28px 14px 22px; }
-  .radio[data-model="cathedral"] .speaker { width: 90%; }
-  .radio[data-model="cathedral"] .arch-wrap { width: 96%; margin-top: -30px; }
-  .radio[data-model="cathedral"] .arch { padding: 24px 8px 10px; }
-  .radio[data-model="cathedral"] .dial-glass { padding: 34px 8px 8px; }
-  .radio[data-model="cathedral"] .knobs { padding: 0 6px; }
+  .radio[data-model="cathedral"] { padding: 34px 14px 30px; }
+  .radio[data-model="cathedral"] .speaker { width: 88%; }
+  .radio[data-model="cathedral"] .arch-wrap { width: 94%; margin-top: -38px; }
+  .radio[data-model="cathedral"] .arch { padding: 24px 8px 28px; }
+  .radio[data-model="cathedral"] .dial-glass { padding: 34px 8px 8px; border-radius: 16px 16px 4px 4px; }
+  .radio[data-model="cathedral"] .knobs { padding: 0 10px; }
+  .stage[data-model="cathedral"] .cab::after { left: -8px; right: -8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cloth.playing, .cloth.playing + .fret, .lamp.tune, .live i { animation: none; }
+  .fret .fglow { transition-duration: .3s; }
   .dial-glass::after { transition-duration: .3s; }
 }
 </style>
@@ -745,32 +777,58 @@ select option { background: #1c0f0b; }
       <button type="button" data-model="cathedral" aria-pressed="false"><span class="sw ct"></span><span><b>RT-1931</b><small>캐서드럴</small></span></button>
     </div>
 
+    <div class="cab">
     <div class="radio" id="radio" data-model="bakelite">
+      <svg class="cab-lines" viewBox="0 0 460 800" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M2 800 L2 292 A298 298 0 0 1 230 4 A298 298 0 0 1 458 292 L458 800" fill="none" stroke="rgba(255,222,175,.38)" stroke-width="3" vector-effect="non-scaling-stroke"/>
+        <g fill="none" stroke="rgba(28,10,2,.62)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linecap="round">
+          <path d="M18 380 L18 292 A282 282 0 0 1 230 20 A282 282 0 0 1 442 292 L442 380"/>
+          <path d="M62 372 C36 410 30 446 34 494 L34 736 C34 766 66 768 68 748 C70 732 50 730 48 744"/>
+          <path d="M398 372 C424 410 430 446 426 494 L426 736 C426 766 394 768 392 748 C390 732 410 730 412 744"/>
+        </g>
+        <g fill="none" stroke="rgba(255,215,165,.16)" stroke-width="1" vector-effect="non-scaling-stroke" transform="translate(1.5 1.5)">
+          <path d="M62 372 C36 410 30 446 34 494 L34 736 C34 766 66 768 68 748 C70 732 50 730 48 744"/>
+          <path d="M398 372 C424 410 430 446 426 494 L426 736 C426 766 394 768 392 748 C390 732 410 730 412 744"/>
+        </g>
+      </svg>
      <div class="face">
 
       <div class="speaker"><div class="cloth" id="cloth"></div>
-        <svg class="fret" viewBox="0 -16 300 296" aria-hidden="true">
+        <svg class="fret" viewBox="0 -12 300 312" aria-hidden="true">
           <defs>
             <pattern id="fcloth" width="4" height="4" patternUnits="userSpaceOnUse">
-              <rect width="4" height="4" fill="#b99c6a"/><path d="M0 0H4M0 2H4" stroke="#8d7144" stroke-width=".7" opacity=".7"/><path d="M0 0V4M2 0V4" stroke="#d9c595" stroke-width=".5" opacity=".6"/>
+              <rect width="4" height="4" fill="#bea172"/><path d="M0 0H4M0 2H4" stroke="#8d7144" stroke-width=".7" opacity=".7"/><path d="M0 0V4M2 0V4" stroke="#dcc898" stroke-width=".5" opacity=".6"/>
             </pattern>
+            <linearGradient id="fdepth" x1="0" y1="0" x2=".25" y2="1">
+              <stop offset="0" stop-color="#1a0a03" stop-opacity=".7"/><stop offset=".38" stop-color="#1a0a03" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="fglow" gradientUnits="userSpaceOnUse" cx="150" cy="170" r="160">
+              <stop offset="0" stop-color="#ffc061" stop-opacity=".95"/><stop offset="1" stop-color="#ff8a1a" stop-opacity=".15"/>
+            </radialGradient>
             <radialGradient id="rosette" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".5" stop-color="#c9c9c9"/><stop offset="1" stop-color="#6d6d6d"/></radialGradient>
+            <g id="lh">
+              <path d="M120 40 C95 22 62 34 66 62 C70 84 100 84 112 68 C118 58 128 52 120 40Z"/>
+              <path d="M66 92 C40 98 30 140 46 168 C58 188 90 184 94 160 C98 136 90 112 100 100 C92 90 78 89 66 92Z"/>
+              <path d="M54 196 C46 226 70 262 108 268 C130 271 138 252 124 240 C106 226 96 206 84 194 C74 186 58 186 54 196Z"/>
+            </g>
+            <path id="leaf" d="M150 236 C141 198 138 140 150 84 C162 140 159 198 150 236Z"/>
+            <g id="holes">
+              <use href="#lh"/><use href="#lh" transform="matrix(-1 0 0 1 300 0)"/>
+              <use href="#leaf"/>
+              <use href="#leaf" transform="rotate(-8 150 240)"/><use href="#leaf" transform="rotate(8 150 240)"/>
+              <use href="#leaf" transform="rotate(-16 150 240)"/><use href="#leaf" transform="rotate(16 150 240)"/>
+            </g>
           </defs>
-          <path d="M22 262 C8 170 14 100 78 46 C112 16 188 16 222 46 C286 100 292 170 278 262" fill="none" stroke="#2a1006" stroke-opacity=".55" stroke-width="2"/>
-          <g fill="url(#fcloth)" stroke="#1f0c04" stroke-width="3" stroke-linejoin="round">
-            <ellipse cx="92" cy="58" rx="38" ry="24" transform="rotate(-24 92 58)"/>
-            <ellipse cx="208" cy="58" rx="38" ry="24" transform="rotate(24 208 58)"/>
-            <ellipse cx="62" cy="134" rx="33" ry="46" transform="rotate(8 62 134)"/>
-            <ellipse cx="238" cy="134" rx="33" ry="46" transform="rotate(-8 238 134)"/>
-            <ellipse cx="108" cy="218" rx="46" ry="27" transform="rotate(-38 108 218)"/>
-            <ellipse cx="192" cy="218" rx="46" ry="27" transform="rotate(38 192 218)"/>
-            <ellipse cx="137" cy="118" rx="8" ry="50" transform="rotate(5 137 118)"/>
-            <ellipse cx="163" cy="118" rx="8" ry="50" transform="rotate(-5 163 118)"/>
-            <ellipse cx="117" cy="138" rx="7" ry="40" transform="rotate(16 117 138)"/>
-            <ellipse cx="183" cy="138" rx="7" ry="40" transform="rotate(-16 183 138)"/>
-          </g>
+          <path d="M18 300 C8 210 18 120 78 58 C108 28 134 12 150 0 C166 12 192 28 222 58 C282 120 292 210 282 300" fill="none" stroke="#2a1006" stroke-opacity=".55" stroke-width="2"/>
+          <path d="M19.5 301.5 C9.5 211.5 19.5 121.5 79.5 59.5 C109.5 29.5 135.5 13.5 151.5 1.5 C167.5 13.5 193.5 29.5 223.5 59.5 C283.5 121.5 293.5 211.5 283.5 301.5" fill="none" stroke="#ffd9a8" stroke-opacity=".14" stroke-width="1"/>
+          <use href="#holes" fill="url(#fcloth)"/>
+          <use class="fglow" href="#holes" fill="url(#fglow)"/>
+          <use href="#holes" fill="url(#fdepth)"/>
+          <use href="#holes" fill="none" stroke="#1f0c04" stroke-width="2.4" stroke-linejoin="round"/>
+          <use href="#holes" fill="none" stroke="#ffd9a8" stroke-opacity=".18" stroke-width="1" transform="translate(.9 1.3)"/>
           <g stroke="#3a1c0a" stroke-width="1.2">
-            <circle cx="150" cy="-4" r="8" fill="url(#rosette)"/><circle cx="26" cy="64" r="7" fill="url(#rosette)"/><circle cx="274" cy="64" r="7" fill="url(#rosette)"/>
+            <circle cx="150" cy="-4" r="7.5" fill="url(#rosette)"/><circle cx="24" cy="74" r="7" fill="url(#rosette)"/><circle cx="276" cy="74" r="7" fill="url(#rosette)"/>
+            <circle cx="150" cy="-4" r="3" fill="none" stroke="#7a7a7a" stroke-width=".8"/><circle cx="24" cy="74" r="2.8" fill="none" stroke="#7a7a7a" stroke-width=".8"/><circle cx="276" cy="74" r="2.8" fill="none" stroke="#7a7a7a" stroke-width=".8"/>
           </g>
         </svg>
       </div>
@@ -830,6 +888,7 @@ select option { background: #1c0f0b; }
 
       <div class="feet"><i></i><i></i></div>
       <div class="plate" id="plate">RADIOTUBE · RT-1946</div>
+    </div>
     </div>
     <p class="hint">노브를 손가락으로 돌리거나, 다이얼 유리창을 좌우로 문질러 바늘을 움직여 보세요.<br>오른쪽 노브를 한 번 누르면 전원이 켜집니다.</p>
   </section>
@@ -1406,13 +1465,12 @@ function renderStationList() {
 
     const del = document.createElement('button');
     del.className = 'del'; del.setAttribute('aria-label', '삭제'); del.innerHTML = icon('trash');
-    del.addEventListener('click', () => {
-      showRetroConfirm('방송국 삭제', '"' + st.name + '" 방송국을 목록에서 지울까요?', () => {
-        stations = stations.filter(s => s.id !== st.id);
-        if (currentPlayingStationId === st.id) stopAllAudio();
-        savePresetStations();
-        showToast('삭제했습니다.');
-      });
+    del.addEventListener('click', e => {
+      e.stopPropagation();
+      stations = stations.filter(s => s.id !== st.id);
+      if (currentPlayingStationId === st.id) stopAllAudio();
+      savePresetStations();
+      showToast('[' + st.name + '] 삭제했습니다.');
     });
 
     item.append(info, del);
